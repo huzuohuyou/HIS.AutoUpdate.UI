@@ -48,10 +48,6 @@
               "target": "Package",
               "version": "[0.6.0-*, )"
             },
-            "AntDesign.Charts": {
-              "target": "Package",
-              "version": "[0.2.0-*, )"
-            },
             "AntDesign.Pro.Layout": {
               "target": "Package",
               "version": "[0.1.0-*, )"

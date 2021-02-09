@@ -19,7 +19,6 @@
     <Import Project="$(NuGetPackageRoot)microsoft.aspnetcore.components.webassembly\5.0.0\build\net5.0\Microsoft.AspNetCore.Components.WebAssembly.props" Condition="Exists('$(NuGetPackageRoot)microsoft.aspnetcore.components.webassembly\5.0.0\build\net5.0\Microsoft.AspNetCore.Components.WebAssembly.props')" />
     <Import Project="$(NuGetPackageRoot)antdesign\0.6.0\buildTransitive\AntDesign.props" Condition="Exists('$(NuGetPackageRoot)antdesign\0.6.0\buildTransitive\AntDesign.props')" />
     <Import Project="$(NuGetPackageRoot)antdesign.pro.layout\0.1.0-nightly-210129055145\buildTransitive\AntDesign.Pro.Layout.props" Condition="Exists('$(NuGetPackageRoot)antdesign.pro.layout\0.1.0-nightly-210129055145\buildTransitive\AntDesign.Pro.Layout.props')" />
-    <Import Project="$(NuGetPackageRoot)antdesign.charts\0.2.0\buildTransitive\AntDesign.Charts.props" Condition="Exists('$(NuGetPackageRoot)antdesign.charts\0.2.0\buildTransitive\AntDesign.Charts.props')" />
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <PkgMicrosoft_AspNetCore_Components_WebAssembly_DevServer Condition=" '$(PkgMicrosoft_AspNetCore_Components_WebAssembly_DevServer)' == '' ">C:\Users\吴海龙\.nuget\packages\microsoft.aspnetcore.components.webassembly.devserver\5.0.0</PkgMicrosoft_AspNetCore_Components_WebAssembly_DevServer>

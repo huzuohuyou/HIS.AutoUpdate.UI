@@ -8,7 +8,6 @@ D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framew
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\HIS.AutoUpdate.Blazor.pdb
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\blazor.webassembly.js
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\AntDesign.dll.gz
-D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\AntDesign.Charts.dll.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\AntDesign.Pro.Layout.dll.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\Microsoft.AspNetCore.Authorization.dll.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\Microsoft.AspNetCore.Components.dll.gz
@@ -209,7 +208,6 @@ D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framew
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\icudt_no_CJK.dat.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\dotnet.5.0.2.js.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\AntDesign.dll
-D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\AntDesign.Charts.dll
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\AntDesign.Pro.Layout.dll
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\Microsoft.AspNetCore.Authorization.dll
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\Microsoft.AspNetCore.Components.dll
@@ -429,7 +427,6 @@ D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\Razor\Layouts\B
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\Razor\Pages\Welcome.razor.g.cs
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\Razor\_Imports.razor.g.cs
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\build-gz\ZqGy7CAa.gz
-D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\build-gz\a2ogmXZV.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\build-gz\Ukj88zQt.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\build-gz\xKmC7w7d.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\build-gz\q2CjiywP.gz
@@ -649,3 +646,5 @@ D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\HIS.AutoUpdate.
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\Newtonsoft.Json.dll.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framework\Newtonsoft.Json.dll
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\build-gz\b26SxPqh.gz
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\RazorDeclaration\Pages\UploadFile.razor.g.cs
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\Razor\Pages\UploadFile.razor.g.cs

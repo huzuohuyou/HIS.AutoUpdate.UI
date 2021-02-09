@@ -1,0 +1,109 @@
+﻿@inject HttpClient Http
+@using System.Text.Json;
+@using HIS.AutoUpdate.Blazor.Models;
+@using System;
+@using System.Collections.Generic;
+@using System.IO;
+@using System.Runtime.Serialization.Formatters;
+<Form Model="@model"
+      OnFinish="OnFinish"
+      OnFinishFailed="OnFinishFailed"
+      LabelColSpan="8"
+      WrapperColSpan="16"
+      >
+    <FormItem Label="配置">
+        <Input @bind-Value="@context.configFileName" />
+    </FormItem>
+
+
+    <FormItem Label="文件">
+        @*<Input type="file" @bind-Value="@context.files" />*@
+        <InputFile OnChange="OnChange" class="form-control" />
+
+    </FormItem>
+
+    <FormItem WrapperColOffset="8" WrapperColSpan="16">
+        <Button Type="@ButtonType.Primary" HtmlType="submit">
+            Submit
+        </Button>
+    </FormItem>
+</Form>
+
+
+@code {
+    string txtValue { get; set; }
+
+    Upload upload;
+    public class Model
+    {
+        public List<IBrowserFile> files { get; set; } = new List<IBrowserFile>();
+        //public List<FileInfo> files { get; set; } = new List<FileInfo>();
+        public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
+
+    }
+
+    private void OnChange(InputFileChangeEventArgs eventArgs)
+    {
+
+        model.files.Add(eventArgs.File);
+
+    }
+    private Model model = new Model();
+
+    private async Task OnFinish(EditContext editContext)
+    {
+        string boundary = string.Format("----WebKitFormBoundary{0}", DateTime.Now.Ticks.ToString("x"));
+
+        var content = new MultipartFormDataContent(boundary);
+        content.Add(new StringContent(@"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"), "configFileName");
+
+
+        //using (FileStream fStream = File.Open(model.files[0].Name, FileMode.Open, FileAccess.Read))
+        //{
+        //    content.Add(new StreamContent(fStream, (int)fStream.Length), "files", model.files[0].Name);
+        //}
+
+        var fileContent = new StreamContent(model.files[0].OpenRead());
+        content.Add(fileContent, "files");
+
+        var result = await Http.PostAsync(
+$@"http://192.168.5.212:20002/api/ConfigurationManager/UploadFile"
+, content);
+        string resultContent = result.Content.ReadAsStringAsync().Result;
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        Console.WriteLine($"Failed:{JsonSerializer.Serialize(model)}");
+    }
+    async Task OnSingleCompleted(UploadInfo fileinfo)
+    {
+        //if (fileinfo.File.State == UploadState.Success)
+        //{
+        //    var result1 = fileinfo.File.GetResponse<ResponseModel>();
+        //    fileinfo.File.Url = result1.url;
+        //}
+
+
+    }
+
+    public async Task ConfigurationManagerAsync()
+    {
+        try
+        {
+            var result = await Http.PostAsJsonAsync<Object>($@"/api/ConfigurationManager/UploadFile", new Object());
+
+            string resultContent = result.Content.ReadAsStringAsync().Result;
+            var r = JsonSerializer.Deserialize<HISClientConfigModel[]>(resultContent);
+
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
+
+
+    }
+
+}
