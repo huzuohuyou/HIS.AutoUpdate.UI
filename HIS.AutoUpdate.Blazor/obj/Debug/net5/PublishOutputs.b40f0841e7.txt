@@ -14,6 +14,10 @@ D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\pub
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\blazor.boot.json
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package-lock.json
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package.json
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\appsettings.json
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\blazor.boot.json
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package-lock.json
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package.json
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\dotnet.timezones.blat
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\dotnet.wasm
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\icudt.dat
@@ -405,6 +409,10 @@ D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\pub
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\blazor.boot.json.br
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package-lock.json.br
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package.json.br
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\appsettings.json.br
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\blazor.boot.json.br
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package-lock.json.br
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package.json.br
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\dotnet.timezones.blat.br
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\dotnet.wasm.br
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\icudt.dat.br
@@ -795,6 +803,10 @@ D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\pub
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\blazor.boot.json.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package-lock.json.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package.json.gz
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\appsettings.json.gz
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\blazor.boot.json.gz
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package-lock.json.gz
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package.json.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\dotnet.timezones.blat.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\dotnet.wasm.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\publish\wwwroot\_framework\icudt.dat.gz
