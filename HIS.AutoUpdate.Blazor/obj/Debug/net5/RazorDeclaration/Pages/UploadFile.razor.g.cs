@@ -122,6 +122,20 @@ using System.Runtime.Serialization.Formatters;
 #line default
 #line hidden
 #nullable disable
+#nullable restore
+#line 9 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
+using System.ComponentModel.DataAnnotations;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 10 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
+using System.Text.Json;
+
+#line default
+#line hidden
+#nullable disable
     public partial class UploadFile : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
@@ -130,82 +144,117 @@ using System.Runtime.Serialization.Formatters;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 33 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
-       
-    string txtValue { get; set; }
+#line 56 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
+ 
+    [Parameter]
+    public string settingsSection { get; set; } = @"DW_HIS.DW.exe";
+    [Parameter]
+    public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
+    Dictionary<string, object> dict = new Dictionary<string, object>()
+{
+        { "configFileName",@"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"}
+    };
 
-    Upload upload;
-    public class Model
+    public class CreateUpdateModel
     {
-        public List<IBrowserFile> files { get; set; } = new List<IBrowserFile>();
+        [Required]
         public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
+        [Required]
+        public Dictionary<string, CurrentVersionURL> settingsSection { get; set; }
 
     }
 
-    private void OnChange(InputFileChangeEventArgs eventArgs)
+    public class Model
     {
-        model.files.Add(eventArgs.File);
+        [Required]
+        public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
+        [Required]
+        public string settingsSection { get; set; } = @"DW_HIS.DW.exe";
+        [Required]
+        public string CurrentVersionURL { get; set; } = "2.0.21.2011|HIS.DW_ER_3.0.21.2011.zip";
 
     }
     private Model model = new Model();
 
     private async Task OnFinish(EditContext editContext)
     {
-        string boundary = string.Format("----WebKitFormBoundary{0}", DateTime.Now.Ticks.ToString("x"));
-
-        var content = new MultipartFormDataContent(boundary);
-        content.Add(new StringContent(@"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"), "configFileName");
-
-
-        using (FileStream fStream = File.Open(model.files[0].Name, FileMode.Open, FileAccess.Read))
+        try
         {
-            content.Add(new StreamContent(fStream, (int)fStream.Length), "file", model.files[0].Name);
+            var createUpdateModel = new CreateUpdateModel()
+            {
+                configFileName = model.configFileName,
+                settingsSection = new Dictionary<string, CurrentVersionURL>()
+                {
+                    { model.settingsSection, new CurrentVersionURL() { currentVersionURL = model.CurrentVersionURL } }
+                }
+            };
+
+            var m = new HISClientConfigModel()
+            {
+                configFileName = model.configFileName,
+                settingsSection = new HISSettingsSection()
+                {
+                    DW_HIS_DW_exe = new CurrentVersionURL
+                    {
+                        currentVersionURL = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"
+                    }
+                }
+            };
+            var s = JsonSerializer.Serialize(createUpdateModel);
+            var result = await Http.PostAsJsonAsync<HISClientConfigModel>($@"/api/ConfigurationManager", m);
+
+            string resultContent = result.Content.ReadAsStringAsync().Result;
+        }
+        catch (Exception ex)
+        {
+
+            await _message.Error("配置失败！！！");
         }
 
-        var result = await Http.PostAsync(
-    $@"http://192.168.5.212:20002/api/ConfigurationManager/UploadFile"
-    , content);
-        string resultContent = result.Content.ReadAsStringAsync().Result;
     }
 
     private void OnFinishFailed(EditContext editContext)
     {
         Console.WriteLine($"Failed:{JsonSerializer.Serialize(model)}");
     }
-    async Task OnSingleCompleted(UploadInfo fileinfo)
+    List<UploadFileItem> fileList = new List<UploadFileItem>
     {
-        //if (fileinfo.File.State == UploadState.Success)
-        //{
-        //    var result1 = fileinfo.File.GetResponse<ResponseModel>();
-        //    fileinfo.File.Url = result1.url;
-        //}
 
+    };
 
-    }
-
-    public async Task ConfigurationManagerAsync()
+    async Task HandleChange(UploadInfo fileinfo)
     {
         try
         {
-            var result = await Http.PostAsJsonAsync<Object>($@"/api/ConfigurationManager/UploadFile", new Object());
-
-            string resultContent = result.Content.ReadAsStringAsync().Result;
-            var r = JsonSerializer.Deserialize<HISClientConfigModel[]>(resultContent);
-
+            if (fileinfo.File.State == UploadState.Success)
+            {
+                await _message.Success("文件上传成功！！！");
+                fileinfo.File.Url = fileinfo.File.ObjectURL;
+            }
         }
         catch (Exception ex)
         {
 
-            throw ex;
+            await _message.Error(ex.Message);
         }
-
 
     }
 
+    public class ResponseModel
+    {
+        public string name { get; set; }
+
+        public string status { get; set; }
+
+        public string url { get; set; }
+
+        public string thumbUrl { get; set; }
+    }
 
 #line default
 #line hidden
 #nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private MessageService _message { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient Http { get; set; }
     }
 }

@@ -5,105 +5,170 @@
 @using System.Collections.Generic;
 @using System.IO;
 @using System.Runtime.Serialization.Formatters;
+@inject MessageService _message
+@using System.ComponentModel.DataAnnotations;
+@using System.Text.Json;
+
+<br />
+
 <Form Model="@model"
       OnFinish="OnFinish"
       OnFinishFailed="OnFinishFailed"
       LabelColSpan="8"
-      WrapperColSpan="16"
-      >
-    <FormItem Label="配置">
-        <Input @bind-Value="@context.configFileName" />
+      WrapperColSpan="16">
+    <FormItem Label="配置文件">
+        <Input Placeholder="configFileName" @bind-Value="@context.configFileName" />
     </FormItem>
 
+    <FormItem Label="模块">
+        <Input Placeholder="settingsSection" @bind-Value="@context.settingsSection" />
+    </FormItem>
+    <FormItem Label="版本">
 
+        <Input Placeholder="CurrentVersionURL" @bind-Value="@context.CurrentVersionURL" />
+    </FormItem>
     <FormItem Label="文件">
-        @*<Input type="file" @bind-Value="@context.files" />*@
-        <InputFile OnChange="OnChange" class="form-control" />
 
+        <Upload Action="http://192.168.5.212:20002/api/ConfigurationManager/UploadFile"
+                Name="files"
+                @bind-FileList="fileList"
+                ShowButton="fileList?.Count < 1"
+                ListType="picture-card"
+                Data="dict"
+                OnChange="HandleChange">
+            <div>
+                <Icon Type="plus"></Icon>
+                <div className="ant-upload-text">Upload</div>
+            </div>
+
+        </Upload>
     </FormItem>
 
     <FormItem WrapperColOffset="8" WrapperColSpan="16">
         <Button Type="@ButtonType.Primary" HtmlType="submit">
-            Submit
+            提交
         </Button>
     </FormItem>
 </Form>
 
 
-@code {
-    string txtValue { get; set; }
+@code
+{
+    [Parameter]
+    public string settingsSection { get; set; } = @"DW_HIS.DW.exe";
+    [Parameter]
+    public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
+    Dictionary<string, object> dict = new Dictionary<string, object>()
+{
+        { "configFileName",@"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"}
+    };
 
-    Upload upload;
-    public class Model
+    public class CreateUpdateModel
     {
-        public List<IBrowserFile> files { get; set; } = new List<IBrowserFile>();
-        //public List<FileInfo> files { get; set; } = new List<FileInfo>();
+        [Required]
         public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
+        [Required]
+        public Dictionary<string, CurrentVersionURL> settingsSection { get; set; }
 
     }
 
-    private void OnChange(InputFileChangeEventArgs eventArgs)
+    public class Model
     {
-
-        model.files.Add(eventArgs.File);
+        [Required]
+        public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
+        [Required]
+        public string settingsSection { get; set; } = @"DW_HIS.DW.exe";
+        [Required]
+        public string CurrentVersionURL { get; set; } = "2.0.21.2011|HIS.DW_ER_3.0.21.2011.zip";
 
     }
     private Model model = new Model();
 
     private async Task OnFinish(EditContext editContext)
     {
-        string boundary = string.Format("----WebKitFormBoundary{0}", DateTime.Now.Ticks.ToString("x"));
+        try
+        {
+            var createUpdateModel = new CreateUpdateModel()
+            {
+                configFileName = model.configFileName,
+                settingsSection = new Dictionary<string, CurrentVersionURL>()
+                {
+                    { model.settingsSection, new CurrentVersionURL() { currentVersionURL = model.CurrentVersionURL } }
+                }
+            };
 
-        var content = new MultipartFormDataContent(boundary);
-        content.Add(new StringContent(@"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"), "configFileName");
+            var m = new HISClientConfigModel()
+            {
+                configFileName = model.configFileName,
+                settingsSection = new HISSettingsSection()
+                {
+                    DW_HIS_DW_exe = new CurrentVersionURL
+                    {
+                        currentVersionURL = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"
+                    }
+                }
+            };
+            var s = JsonSerializer.Serialize(createUpdateModel);
+            var result = await Http.PostAsJsonAsync<HISClientConfigModel>($@"/api/ConfigurationManager", m);
 
+            string resultContent = result.Content.ReadAsStringAsync().Result;
+        }
+        catch (Exception ex)
+        {
 
-        //using (FileStream fStream = File.Open(model.files[0].Name, FileMode.Open, FileAccess.Read))
-        //{
-        //    content.Add(new StreamContent(fStream, (int)fStream.Length), "files", model.files[0].Name);
-        //}
+            await _message.Error("配置失败！！！");
+        }
 
-        var fileContent = new StreamContent(model.files[0].OpenRead());
-        content.Add(fileContent, "files");
-
-        var result = await Http.PostAsync(
-$@"http://192.168.5.212:20002/api/ConfigurationManager/UploadFile"
-, content);
-        string resultContent = result.Content.ReadAsStringAsync().Result;
     }
 
     private void OnFinishFailed(EditContext editContext)
     {
         Console.WriteLine($"Failed:{JsonSerializer.Serialize(model)}");
     }
-    async Task OnSingleCompleted(UploadInfo fileinfo)
+    List<UploadFileItem> fileList = new List<UploadFileItem>
     {
-        //if (fileinfo.File.State == UploadState.Success)
-        //{
-        //    var result1 = fileinfo.File.GetResponse<ResponseModel>();
-        //    fileinfo.File.Url = result1.url;
-        //}
 
+    };
 
-    }
-
-    public async Task ConfigurationManagerAsync()
+    async Task HandleChange(UploadInfo fileinfo)
     {
         try
         {
-            var result = await Http.PostAsJsonAsync<Object>($@"/api/ConfigurationManager/UploadFile", new Object());
-
-            string resultContent = result.Content.ReadAsStringAsync().Result;
-            var r = JsonSerializer.Deserialize<HISClientConfigModel[]>(resultContent);
-
+            if (fileinfo.File.State == UploadState.Success)
+            {
+                await _message.Success("文件上传成功！！！");
+                fileinfo.File.Url = fileinfo.File.ObjectURL;
+            }
         }
         catch (Exception ex)
         {
 
-            throw ex;
+            await _message.Error(ex.Message);
         }
-
 
     }
 
+    public class ResponseModel
+    {
+        public string name { get; set; }
+
+        public string status { get; set; }
+
+        public string url { get; set; }
+
+        public string thumbUrl { get; set; }
+    }
 }
+
+<style>
+    /* you can make up upload button and sample style by using stylesheets */
+    .ant-upload-select-picture-card i {
+        color: #999;
+        font-size: 32px;
+    }
+
+    .ant-upload-select-picture-card .ant-upload-text {
+        margin-top: 8px;
+        color: #666;
+    }
+</style>

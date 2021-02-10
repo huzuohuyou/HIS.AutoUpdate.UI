@@ -118,7 +118,7 @@ using System.Text.Json.Serialization;
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\AutoUpdateClient.razor"
+#line 9 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\AutoUpdateClient.razor"
 using System.Reflection;
 
 #line default
@@ -133,7 +133,11 @@ using System.Reflection;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 28 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\AutoUpdateClient.razor"
+#line 32 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\AutoUpdateClient.razor"
+        
+
+    #region 弹出框上传
+
     bool _visible = false;
 
     private void HandleOk(MouseEventArgs e)
@@ -147,15 +151,13 @@ using System.Reflection;
         Console.WriteLine(e);
         _visible = false;
     }
+    #endregion
+
+    #region 列表
+
+
     Column[] data { get; set; }
-    void OnSingleCompleted(UploadInfo fileinfo)
-    {
-        if (fileinfo.File.State == UploadState.Success)
-        {
-            var result = fileinfo.File.GetResponse<ResponseModel>();
-            fileinfo.File.Url = result.url;
-        }
-    }
+
     private PropertyInfo[] GetPropertyInfoArray(Type type)
     {
         PropertyInfo[] props = null;
@@ -168,8 +170,11 @@ using System.Reflection;
         { }
         return props;
     }
+
     HISClientConfigModel HISModal = new HISClientConfigModel() { settingsSection = new HISSettingsSection() };
+
     HISClientConfigModel CMITModal { get; set; }
+
     public async Task ConfigurationManagerAsync()
     {
         try
@@ -182,7 +187,6 @@ using System.Reflection;
             {
                 HISModal = r[0];
                 CMITModal = r[1];
-                SYSTEM_HIS_Foundations_exe = HISModal?.settingsSection?.SYSTEM_HIS_Foundations_exe?.currentVersionURL;
             }
             else
             {
@@ -194,7 +198,7 @@ using System.Reflection;
             var list = new List<Column>();
             foreach (var item in array)
             {
-                CurrentVersionURL c = (CurrentVersionURL)HISModal.settingsSection.GetType().GetProperty(item.Name).GetValue(HISModal.settingsSection, null)??new CurrentVersionURL();
+                CurrentVersionURL c = (CurrentVersionURL)HISModal.settingsSection.GetType().GetProperty(item.Name).GetValue(HISModal.settingsSection, null) ?? new CurrentVersionURL();
                 var value = c.GetType().GetProperty("currentVersionURL").GetValue(c, null)?.ToString();
                 if (!string.IsNullOrWhiteSpace(value))
                 {
@@ -208,64 +212,44 @@ using System.Reflection;
                 }
             }
 
-            //foreach (var item in array)
-            //{
-            //    CurrentVersionURL c = (CurrentVersionURL)CMITModal.settingsSection.GetType().GetProperty(item.Name).GetValue(CMITModal.settingsSection, null) ?? new CurrentVersionURL();
-            //    var value = c.GetType().GetProperty("currentVersionURL").GetValue(c, null)?.ToString();
-            //    if (string.IsNullOrWhiteSpace(value))
-            //    {
-            //        list.Add(new Column
-            //        {
-            //            ConfigFileName = "HIS.AutoUpdate",
-            //            SettingsSectionName = item.Name,
-            //            CurrentVersionURL = value,
+            foreach (var item in array)
+            {
+                CurrentVersionURL c = (CurrentVersionURL)CMITModal.settingsSection.GetType().GetProperty(item.Name).GetValue(CMITModal.settingsSection, null) ?? new CurrentVersionURL();
+                var value = c.GetType().GetProperty("currentVersionURL").GetValue(c, null)?.ToString();
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    list.Add(new Column
+                    {
+                        ConfigFileName = "CMIT.AutoUpdate",
+                        SettingsSectionName = item.Name,
+                        CurrentVersionURL = value,
 
-            //        });
-            //    }
-            //}
-            data =list.ToArray();
+                    });
+                }
+            }
+            data = list.ToArray();
         }
         catch (Exception ex)
         {
 
-            throw ex;
+            await _message.Error(ex.Message);
         }
 
 
     }
-
-
 
     protected override async Task OnInitializedAsync()
     {
         await ConfigurationManagerAsync();
 
     }
+    #endregion
 
-    string SYSTEM_HIS_Foundations_exe { get; set; }
-
-    RenderFragment extra =
 
 #line default
 #line hidden
 #nullable disable
-        (__builder2) => {
-            __builder2.AddMarkupContent(0, "<div @onclick:stopPropagation><Icon Type=\"setting\"></Icon></div>");
-        }
-#nullable restore
-#line 138 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\AutoUpdateClient.razor"
-                                                                                           ;
-
-string expandIconPosition = "left";
-
-void Callback(string[] keys)
-{
-Console.WriteLine(string.Join(',', keys));
-}
-
-#line default
-#line hidden
-#nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private MessageService _message { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient Http { get; set; }
     }
 }

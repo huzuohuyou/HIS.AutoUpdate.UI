@@ -648,3 +648,13 @@ D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\_framew
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\build-gz\b26SxPqh.gz
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\RazorDeclaration\Pages\UploadFile.razor.g.cs
 D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\Razor\Pages\UploadFile.razor.g.cs
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\RazorDeclaration\Pages\UploadFile2.razor.g.cs
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\obj\Debug\net5\Razor\Pages\UploadFile2.razor.g.cs
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\publish\wwwroot\_framework\publish\wwwroot\appsettings.json
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\publish\wwwroot\_framework\publish\wwwroot\_framework\blazor.boot.json
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\publish\wwwroot\_framework\publish\wwwroot\_framework\package-lock.json
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\publish\wwwroot\_framework\publish\wwwroot\_framework\package.json
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\appsettings.json
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\blazor.boot.json
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package-lock.json
+D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\publish\wwwroot\_framework\publish\wwwroot\_framework\publish\wwwroot\_framework\package.json

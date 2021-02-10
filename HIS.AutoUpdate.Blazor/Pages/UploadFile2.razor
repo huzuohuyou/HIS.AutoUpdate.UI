@@ -1,0 +1,48 @@
+﻿@inject HttpClient Http
+@using System.Text.Json;
+@using HIS.AutoUpdate.Blazor.Models;
+@using System;
+@using System.Collections.Generic;
+@using System.IO;
+@using System.Runtime.Serialization.Formatters;
+@inject MessageService _message
+<Input Placeholder="Basic usage" @bind-Value="@configFileName" />
+<Upload Action="http://192.168.5.212:20002/api/ConfigurationManager/UploadFile"
+        Name="files"
+        OnSingleCompleted="OnSingleCompleted"
+        Data="dict">
+    <Button Icon="upload">
+        <span>点击上传</span>
+    </Button>
+</Upload>
+
+@code {
+    [Parameter]
+    public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
+    Dictionary<string, object> dict = new Dictionary<string, object>()
+{
+        { "configFileName",@"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"}
+    };
+
+
+    async Task OnSingleCompleted(UploadInfo fileinfo)
+    {
+        try
+        {
+            if (fileinfo.File.State == UploadState.Success)
+            {
+                await _message.Success("文件上传成功！！！");
+                //var result = fileinfo.File.GetResponse<ResponseModel>();
+                //fileinfo.File.Url = result.url;
+            }
+        }
+        catch (Exception ex)
+        {
+
+            await _message.Error(ex.Message);
+        }
+
+    }
+
+
+}

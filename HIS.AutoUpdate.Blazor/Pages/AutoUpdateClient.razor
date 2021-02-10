@@ -5,9 +5,11 @@
 @using HIS.AutoUpdate.Blazor.Models;
 @inject HttpClient Http
 @using System.Text.Json.Serialization
+@inject MessageService _message
 @using  System.Reflection;
+
 <PageContainer Title="更新HIS客户端">
-    <Button Type="primary" OnClick="@ConfigurationManagerAsync">/api/ConfigurationManager</Button>
+    @*<Button Type="primary" OnClick="@ConfigurationManagerAsync">/api/ConfigurationManager</Button>*@
     <Table DataSource="data" PageSize="100" ScrollX="1000" ScrollY="340px">
         <Column @bind-Field="@context.ConfigFileName" Width="80" Title="系统" />
         <Column @bind-Field="@context.SettingsSectionName" Width="100" Title="模块" />
@@ -15,17 +17,23 @@
 
         <ActionColumn Title="操作" Width="60" Fixed="right">
             <Button OnClick="@(()=>{ _visible = true; })">action</Button>
+            
         </ActionColumn>
     </Table>
     <Modal Title="上传文件"
            Visible="@_visible"
            OnOk="@HandleOk"
-           OnCancel="@HandleCancel">
-        <UploadFile></UploadFile>
+           OnCancel="@HandleCancel"
+           Footer="null">
+        <UploadFile ></UploadFile>
     </Modal>
 </PageContainer>
 @code
-{   bool _visible = false;
+{       
+
+    #region 弹出框上传
+
+    bool _visible = false;
 
     private void HandleOk(MouseEventArgs e)
     {
@@ -38,15 +46,13 @@
         Console.WriteLine(e);
         _visible = false;
     }
+    #endregion
+
+    #region 列表
+
+
     Column[] data { get; set; }
-    void OnSingleCompleted(UploadInfo fileinfo)
-    {
-        if (fileinfo.File.State == UploadState.Success)
-        {
-            var result = fileinfo.File.GetResponse<ResponseModel>();
-            fileinfo.File.Url = result.url;
-        }
-    }
+
     private PropertyInfo[] GetPropertyInfoArray(Type type)
     {
         PropertyInfo[] props = null;
@@ -59,8 +65,11 @@
         { }
         return props;
     }
+
     HISClientConfigModel HISModal = new HISClientConfigModel() { settingsSection = new HISSettingsSection() };
+
     HISClientConfigModel CMITModal { get; set; }
+
     public async Task ConfigurationManagerAsync()
     {
         try
@@ -73,7 +82,6 @@
             {
                 HISModal = r[0];
                 CMITModal = r[1];
-                SYSTEM_HIS_Foundations_exe = HISModal?.settingsSection?.SYSTEM_HIS_Foundations_exe?.currentVersionURL;
             }
             else
             {
@@ -85,7 +93,7 @@
             var list = new List<Column>();
             foreach (var item in array)
             {
-                CurrentVersionURL c = (CurrentVersionURL)HISModal.settingsSection.GetType().GetProperty(item.Name).GetValue(HISModal.settingsSection, null)??new CurrentVersionURL();
+                CurrentVersionURL c = (CurrentVersionURL)HISModal.settingsSection.GetType().GetProperty(item.Name).GetValue(HISModal.settingsSection, null) ?? new CurrentVersionURL();
                 var value = c.GetType().GetProperty("currentVersionURL").GetValue(c, null)?.ToString();
                 if (!string.IsNullOrWhiteSpace(value))
                 {
@@ -99,48 +107,37 @@
                 }
             }
 
-            //foreach (var item in array)
-            //{
-            //    CurrentVersionURL c = (CurrentVersionURL)CMITModal.settingsSection.GetType().GetProperty(item.Name).GetValue(CMITModal.settingsSection, null) ?? new CurrentVersionURL();
-            //    var value = c.GetType().GetProperty("currentVersionURL").GetValue(c, null)?.ToString();
-            //    if (string.IsNullOrWhiteSpace(value))
-            //    {
-            //        list.Add(new Column
-            //        {
-            //            ConfigFileName = "HIS.AutoUpdate",
-            //            SettingsSectionName = item.Name,
-            //            CurrentVersionURL = value,
+            foreach (var item in array)
+            {
+                CurrentVersionURL c = (CurrentVersionURL)CMITModal.settingsSection.GetType().GetProperty(item.Name).GetValue(CMITModal.settingsSection, null) ?? new CurrentVersionURL();
+                var value = c.GetType().GetProperty("currentVersionURL").GetValue(c, null)?.ToString();
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    list.Add(new Column
+                    {
+                        ConfigFileName = "CMIT.AutoUpdate",
+                        SettingsSectionName = item.Name,
+                        CurrentVersionURL = value,
 
-            //        });
-            //    }
-            //}
-            data =list.ToArray();
+                    });
+                }
+            }
+            data = list.ToArray();
         }
         catch (Exception ex)
         {
 
-            throw ex;
+            await _message.Error(ex.Message);
         }
 
 
     }
-
-
 
     protected override async Task OnInitializedAsync()
     {
         await ConfigurationManagerAsync();
 
     }
+    #endregion
 
-    string SYSTEM_HIS_Foundations_exe { get; set; }
-
-    RenderFragment extra =@<div @onclick:stopPropagation><Icon Type="setting"></Icon></div>;
-
-string expandIconPosition = "left";
-
-void Callback(string[] keys)
-{
-Console.WriteLine(string.Join(',', keys));
-}
 }
