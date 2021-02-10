@@ -9,7 +9,7 @@
 @using  System.Reflection;
 
 <PageContainer Title="更新HIS客户端">
-    @*<Button Type="primary" OnClick="@ConfigurationManagerAsync">/api/ConfigurationManager</Button>*@
+    <Button Type="primary" OnClick="@(()=>{ _visible = true; })">/api/ConfigurationManager</Button>
     <Table DataSource="data" PageSize="100" ScrollX="1000" ScrollY="340px">
         <Column @bind-Field="@context.MoudleName" Width="80" Title="模组" />
         <Column @bind-Field="@context.SettingsSectionName" Width="100" Title="模块" />

@@ -11,126 +11,126 @@ namespace HIS.AutoUpdate.Blazor.Pages
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\_Imports.razor"
+#line 1 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\_Imports.razor"
 using AntDesign;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\_Imports.razor"
+#line 2 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\_Imports.razor"
 using AntDesign.Pro.Layout;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\_Imports.razor"
+#line 3 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\_Imports.razor"
+#line 4 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\_Imports.razor"
 using System.Net.Http.Json;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\_Imports.razor"
+#line 5 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\_Imports.razor"
+#line 6 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\_Imports.razor"
+#line 7 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\_Imports.razor"
+#line 8 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\_Imports.razor"
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\_Imports.razor"
+#line 9 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 10 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\_Imports.razor"
+#line 10 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\_Imports.razor"
 using HIS.AutoUpdate.Blazor;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
+#line 2 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
 using System.Text.Json;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
+#line 3 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
 using HIS.AutoUpdate.Blazor.Models;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
+#line 4 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
 using System;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
+#line 5 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
 using System.Collections.Generic;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
+#line 6 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
 using System.IO;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
+#line 7 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
 using System.Runtime.Serialization.Formatters;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
+#line 9 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
 using System.ComponentModel.DataAnnotations;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 10 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
+#line 10 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
 using System.Text.Json;
 
 #line default
@@ -144,12 +144,12 @@ using System.Text.Json;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 56 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
+#line 56 "D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\Pages\UploadFile.razor"
  
     [Parameter]
     public string settingsSection { get; set; } = @"DW_HIS.DW.exe";
     [Parameter]
-    public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
+    public string configFileName { get; set; } = "E:\\Deployment\\HIS.AutoUpdate\\AutoUpgradeServerDefine.config";
     Dictionary<string, object> dict = new Dictionary<string, object>()
 {
         { "configFileName",@"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"}
@@ -158,7 +158,7 @@ using System.Text.Json;
     public class CreateUpdateModel
     {
         [Required]
-        public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
+        public string configFileName { get; set; } = "E:\\Deployment\\HIS.AutoUpdate\\AutoUpgradeServerDefine.config";
         [Required]
         public Dictionary<string, CurrentVersionURL> settingsSection { get; set; }
 
@@ -188,23 +188,9 @@ using System.Text.Json;
                     { settingsSection, new CurrentVersionURL() { currentVersionURL = model.CurrentVersionURL } }
                 }
             };
+            
 
-            var m = new HISClientConfigModel()
-            {
-                configFileName = configFileName,
-                settingsSection = new HISSettingsSection()
-                {
-                    DW_HIS_DW_exe = new CurrentVersionURL
-                    {
-                        currentVersionURL = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"
-                    }
-                }
-            };
-            var s = JsonSerializer.Serialize(createUpdateModel);
-
-            //var result = await Http.PostAsync($@"/api/ConfigurationManager", new ByteArrayContent(Convert.));
-
-            var result = await Http.PostAsJsonAsync<HISClientConfigModel>($@"/api/ConfigurationManager", m);
+            var result = await Http.PostAsJsonAsync<CreateUpdateModel>($@"/api/ConfigurationManager", createUpdateModel);
 
             string resultContent = result.Content.ReadAsStringAsync().Result;
         }
