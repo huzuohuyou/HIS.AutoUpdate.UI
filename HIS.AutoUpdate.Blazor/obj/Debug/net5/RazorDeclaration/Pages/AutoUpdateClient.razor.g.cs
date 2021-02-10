@@ -133,12 +133,14 @@ using System.Reflection;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 32 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\AutoUpdateClient.razor"
+#line 35 "D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\Pages\AutoUpdateClient.razor"
         
 
     #region 弹出框上传
 
     bool _visible = false;
+    string configFileName { get; set; }
+    string settingsSection { get; set; }
 
     private void HandleOk(MouseEventArgs e)
     {
@@ -175,6 +177,12 @@ using System.Reflection;
 
     HISClientConfigModel CMITModal { get; set; }
 
+    private void Config(Column data) {
+        _visible = true;
+        configFileName = data.ConfigFileName;
+        settingsSection = data.SettingsSectionName;
+    }
+
     public async Task ConfigurationManagerAsync()
     {
         try
@@ -204,7 +212,8 @@ using System.Reflection;
                 {
                     list.Add(new Column
                     {
-                        ConfigFileName = "HIS.AutoUpdate",
+                        ConfigFileName = HISModal.configFileName,
+                        MoudleName = "HIS.AutoUpdate",
                         SettingsSectionName = item.Name,
                         CurrentVersionURL = value,
 
@@ -220,7 +229,8 @@ using System.Reflection;
                 {
                     list.Add(new Column
                     {
-                        ConfigFileName = "CMIT.AutoUpdate",
+                        ConfigFileName = CMITModal.configFileName,
+                        MoudleName = "CMIT.AutoUpdate",
                         SettingsSectionName = item.Name,
                         CurrentVersionURL = value,
 

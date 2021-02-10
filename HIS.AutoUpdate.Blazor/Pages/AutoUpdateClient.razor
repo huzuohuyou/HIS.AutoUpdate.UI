@@ -11,13 +11,13 @@
 <PageContainer Title="更新HIS客户端">
     @*<Button Type="primary" OnClick="@ConfigurationManagerAsync">/api/ConfigurationManager</Button>*@
     <Table DataSource="data" PageSize="100" ScrollX="1000" ScrollY="340px">
-        <Column @bind-Field="@context.ConfigFileName" Width="80" Title="系统" />
+        <Column @bind-Field="@context.MoudleName" Width="80" Title="模组" />
         <Column @bind-Field="@context.SettingsSectionName" Width="100" Title="模块" />
         <Column @bind-Field="@context.CurrentVersionURL" Width="150" Title="版本文件" />
-
+        <Column @bind-Field="@context.ConfigFileName" Width="150" Title="配置文件" Ellipsis />
         <ActionColumn Title="操作" Width="60" Fixed="right">
-            <Button OnClick="@(()=>{ _visible = true; })">action</Button>
-            
+            <Button OnClick="()=>Config(context)">action</Button>
+
         </ActionColumn>
     </Table>
     <Modal Title="上传文件"
@@ -25,7 +25,10 @@
            OnOk="@HandleOk"
            OnCancel="@HandleCancel"
            Footer="null">
-        <UploadFile ></UploadFile>
+        <UploadFile 
+                ConfigFileName="@configFileName" 
+                    settingsSection="@settingsSection"
+                    ></UploadFile>
     </Modal>
 </PageContainer>
 @code
@@ -34,6 +37,8 @@
     #region 弹出框上传
 
     bool _visible = false;
+    string configFileName { get; set; }
+    string settingsSection { get; set; }
 
     private void HandleOk(MouseEventArgs e)
     {
@@ -70,6 +75,12 @@
 
     HISClientConfigModel CMITModal { get; set; }
 
+    private void Config(Column data) {
+        _visible = true;
+        configFileName = data.ConfigFileName;
+        settingsSection = data.SettingsSectionName;
+    }
+
     public async Task ConfigurationManagerAsync()
     {
         try
@@ -99,7 +110,8 @@
                 {
                     list.Add(new Column
                     {
-                        ConfigFileName = "HIS.AutoUpdate",
+                        ConfigFileName = HISModal.configFileName,
+                        MoudleName = "HIS.AutoUpdate",
                         SettingsSectionName = item.Name,
                         CurrentVersionURL = value,
 
@@ -115,7 +127,8 @@
                 {
                     list.Add(new Column
                     {
-                        ConfigFileName = "CMIT.AutoUpdate",
+                        ConfigFileName = CMITModal.configFileName,
+                        MoudleName = "CMIT.AutoUpdate",
                         SettingsSectionName = item.Name,
                         CurrentVersionURL = value,
 

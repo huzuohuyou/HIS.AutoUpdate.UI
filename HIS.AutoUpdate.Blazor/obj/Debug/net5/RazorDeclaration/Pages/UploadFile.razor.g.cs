@@ -166,10 +166,10 @@ using System.Text.Json;
 
     public class Model
     {
-        [Required]
-        public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
-        [Required]
-        public string settingsSection { get; set; } = @"DW_HIS.DW.exe";
+        //[Required]
+        //public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
+        //[Required]
+        //public string settingsSection { get; set; } = @"DW_HIS.DW.exe";
         [Required]
         public string CurrentVersionURL { get; set; } = "2.0.21.2011|HIS.DW_ER_3.0.21.2011.zip";
 
@@ -182,16 +182,16 @@ using System.Text.Json;
         {
             var createUpdateModel = new CreateUpdateModel()
             {
-                configFileName = model.configFileName,
+                configFileName = configFileName,
                 settingsSection = new Dictionary<string, CurrentVersionURL>()
                 {
-                    { model.settingsSection, new CurrentVersionURL() { currentVersionURL = model.CurrentVersionURL } }
+                    { settingsSection, new CurrentVersionURL() { currentVersionURL = model.CurrentVersionURL } }
                 }
             };
 
             var m = new HISClientConfigModel()
             {
-                configFileName = model.configFileName,
+                configFileName = configFileName,
                 settingsSection = new HISSettingsSection()
                 {
                     DW_HIS_DW_exe = new CurrentVersionURL
@@ -201,6 +201,9 @@ using System.Text.Json;
                 }
             };
             var s = JsonSerializer.Serialize(createUpdateModel);
+
+            //var result = await Http.PostAsync($@"/api/ConfigurationManager", new ByteArrayContent(Convert.));
+
             var result = await Http.PostAsJsonAsync<HISClientConfigModel>($@"/api/ConfigurationManager", m);
 
             string resultContent = result.Content.ReadAsStringAsync().Result;
