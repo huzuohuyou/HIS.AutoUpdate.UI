@@ -16,7 +16,7 @@
         <Column @bind-Field="@context.CurrentVersionURL" Width="150" Title="版本文件" />
         <Column @bind-Field="@context.ConfigFileName" Width="150" Title="配置文件" Ellipsis />
         <ActionColumn Title="操作" Width="60" Fixed="right">
-            <Button OnClick="()=>Config(context)">action</Button>
+            <Button Type="primary" Size="small" Shape="round" Icon="upload" OnClick="()=>Config(context)">上传 </Button>
 
         </ActionColumn>
     </Table>
@@ -25,10 +25,8 @@
            OnOk="@HandleOk"
            OnCancel="@HandleCancel"
            Footer="null">
-        <UploadFile 
-                ConfigFileName="@configFileName" 
-                    settingsSection="@settingsSection"
-                    ></UploadFile>
+        <UploadFile ConfigFileName="@configFileName"
+                          settingsSection="@settingsSection"></UploadFile>
     </Modal>
 </PageContainer>
 @code

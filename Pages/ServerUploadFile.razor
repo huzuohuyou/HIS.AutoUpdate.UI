@@ -16,20 +16,14 @@
       OnFinishFailed="OnFinishFailed"
       LabelColSpan="8"
       WrapperColSpan="16">
-    <FormItem Label="配置文件">
-        <Input Placeholder="configFileName" @bind-Value="@configFileName" />
+    <FormItem Label="站点">
+        <Input Placeholder="configFileName" @bind-Value="@siteName" />
     </FormItem>
 
-    <FormItem Label="模块">
-        <Input Placeholder="settingsSection" @bind-Value="@settingsSection" />
-    </FormItem>
-    <FormItem Label="版本">
-
-        <Input Placeholder="CurrentVersionURL" @bind-Value="@context.CurrentVersionURL" />
-    </FormItem>
+    
     <FormItem Label="文件">
 
-        <Upload Action="http://192.168.5.212:20002/api/ConfigurationManager/UploadFile"
+        <Upload Action="http://192.168.5.212:20002/api/Sites/UploadFile"
                 Name="files"
                 @bind-FileList="fileList"
                 ShowButton="fileList?.Count < 1"
@@ -43,24 +37,17 @@
 
         </Upload>
     </FormItem>
-
-    <FormItem WrapperColOffset="8" WrapperColSpan="16">
-        <Button Type="@ButtonType.Primary" HtmlType="submit">
-            提交
-        </Button>
-    </FormItem>
 </Form>
 
 
 @code
 {
+
     [Parameter]
-    public string settingsSection { get; set; } = @"DW_HIS.DW.exe";
-    [Parameter]
-    public string configFileName { get; set; } = "E:\\Deployment\\HIS.AutoUpdate\\AutoUpgradeServerDefine.config";
+    public  string siteName { get; set; } = "HSPP.BizAPI";
     Dictionary<string, object> dict = new Dictionary<string, object>()
     {
-        { "configFileName",@"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"}
+        { "siteName", "HSPP.BizAPI"}
     };
 
     public class CreateUpdateModel
@@ -88,17 +75,7 @@
     {
         try
         {
-            var createUpdateModel = new CreateUpdateModel()
-            {
-                configFileName = configFileName,
-                settingsSection = new Dictionary<string, CurrentVersionURL>()
-                {
-                    { settingsSection, new CurrentVersionURL() { currentVersionURL = model.CurrentVersionURL } }
-                }
-            };
-            var result = await Http.PostAsJsonAsync<CreateUpdateModel>($@"/api/ConfigurationManager", createUpdateModel);
 
-            string resultContent = result.Content.ReadAsStringAsync().Result;
         }
         catch (Exception ex)
         {
@@ -112,7 +89,10 @@
     {
         Console.WriteLine($"Failed:{JsonSerializer.Serialize(model)}");
     }
-    List<UploadFileItem> fileList = new List<UploadFileItem> { };
+    List<UploadFileItem> fileList = new List<UploadFileItem>
+    {
+
+    };
 
     async Task HandleChange(UploadInfo fileinfo)
     {
@@ -123,6 +103,7 @@
                 await _message.Success("文件上传成功！！！");
                 fileinfo.File.Url = fileinfo.File.ObjectURL;
             }
+            
         }
         catch (Exception ex)
         {
@@ -132,7 +113,16 @@
 
     }
 
+    public class ResponseModel
+    {
+        public string name { get; set; }
 
+        public string status { get; set; }
+
+        public string url { get; set; }
+
+        public string thumbUrl { get; set; }
+    }
 }
 
 <style>

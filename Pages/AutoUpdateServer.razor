@@ -1,0 +1,177 @@
+﻿@page "/AutoUpdateServer"
+@using System.ComponentModel
+@using AntDesign.TableModels
+@using System.Text.Json;
+@using HIS.AutoUpdate.Blazor.Models;
+@inject HttpClient Http
+@using System.Text.Json.Serialization
+@inject MessageService _message
+@using  System.Reflection;
+@using System.Text;
+<PageContainer Title="更新HIS服务端">
+    
+    <Table DataSource="data" PageSize="100" ScrollX="800" ScrollY="340px">
+        <Column @bind-Field="@context.Name" Width="100" Title="站点" />
+        <Column @bind-Field="@context.StateValue" Width="60" Title="网站状态">
+            <Switch CheckedChildren="已启动" UnCheckedChildren="已停止" OnChange="()=>SiteStateHasChanged(context)" @bind-Value="@context.StateValue"></Switch>
+        </Column>
+        <Column @bind-Field="@context.PhysicalPath" Width="150" Title="目录" />
+        <ActionColumn Title="网站操作" Width="60" Fixed="right">
+            <Button Type="primary" Size="small" Shape="round" Icon="upload" OnClick="()=>Config(context)">上传 </Button>
+
+        </ActionColumn>
+        <Column @bind-Field="@context.PoolName" Width="100" Title="应用程序池" />
+        <Column @bind-Field="@context.PoolStateValue" Width="60" Title="程序池状态" Ellipsis>
+            <Switch CheckedChildren="已启动" UnCheckedChildren="已停止" OnChange="()=>PoolStateHasChanged(context)" @bind-Value="@context.PoolStateValue"></Switch>
+        </Column>
+        <ActionColumn Title="程序池操作" Width="60" Fixed="right">
+            <Button Type="primary" Size="small" Shape="round" Icon="redo" OnClick="()=>Recycle(context)">回收</Button>
+
+        </ActionColumn>
+    </Table>
+    <Modal Title="上传文件"
+           Visible="@_visible"
+           OnOk="@HandleOk"
+           OnCancel="@HandleCancel"
+           Footer="null">
+        <ServerUploadFile siteName="@siteName"></ServerUploadFile>
+    </Modal>
+</PageContainer>
+@code
+{       
+
+    #region 弹出框上传
+
+    bool _visible = false;
+    string siteName { get; set; }
+
+
+    private void HandleOk(MouseEventArgs e)
+    {
+        Console.WriteLine(e);
+        _visible = false;
+    }
+
+    private void HandleCancel(MouseEventArgs e)
+    {
+        Console.WriteLine(e);
+        _visible = false;
+    }
+    #endregion
+
+    #region 列表
+
+
+    Site[] data { get; set; }
+
+    private void Config(Site data)
+    {
+        _visible = true;
+        siteName = data.Name;
+    }
+
+
+    private async Task Recycle(Site data)
+    {
+        try
+        {
+            var url = @"/api/AppPools/Recycle";
+            var siteName = new MultipartFormDataContent();
+            siteName.Add(new StringContent(data.Name), "appPoolName");
+            var result = await Http.PostAsync(url, siteName);
+            var resultContent = result.Content.ReadAsStringAsync().Result;
+            if (string.IsNullOrWhiteSpace(resultContent))
+            {
+                await _message.Success("操作成功！！！");
+            }
+            else
+            {
+                var p= JsonSerializer.Deserialize<PostResonse>(resultContent);
+                await _message.Error($@"代码：{p.status}标题：{p.title}");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _message.Error($@"发生异常！！！{ex.Message}");
+        }
+    }
+    private async Task SiteStateHasChanged(Site data)
+    {
+        try
+        {
+            var url = @"/api/Sites/Stop";
+            if (data.StateValue.Equals(true))
+            {
+                url = @"/api/Sites/Start";
+            }
+            var siteName = new MultipartFormDataContent();
+            siteName.Add(new StringContent(data.Name), "siteName");
+            var result = await Http.PostAsync(url, siteName);
+            var resultContent = result.Content.ReadAsStringAsync().Result;
+            if (string.IsNullOrWhiteSpace(resultContent))
+            {
+                await _message.Success("操作成功！！！");
+            }
+            else
+            {
+                data.StateValue = !data.StateValue;//状态恢复
+                var p = JsonSerializer.Deserialize<PostResonse>(resultContent);
+                await _message.Error($@"代码：{p.status} 标题：{p.title}");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _message.Error($@"发生异常！！！{ex.Message}");
+        }
+    }
+
+    private async Task PoolStateHasChanged(Site data)
+    {
+        try
+        {
+            var url = @"/api/AppPools/Stop";
+            if (data.PoolStateValue.Equals(true))
+            {
+                url = @"/api/AppPools/Start";
+            }
+            var siteName = new MultipartFormDataContent();
+            siteName.Add(new StringContent(data.Name), "appPoolName");
+            var result = await Http.PostAsync(url, siteName);
+            var resultContent = result.Content.ReadAsStringAsync().Result;
+            if (string.IsNullOrWhiteSpace(resultContent))
+            {
+                await _message.Success("操作成功！！！");
+            }
+            else
+            {
+                data.PoolStateValue = !data.PoolStateValue;//状态恢复
+                var p = JsonSerializer.Deserialize<PostResonse>(resultContent);
+                await _message.Error($@"代码：{p.status} 标题：{p.title}");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _message.Error($@"发生异常！！！{ex.Message}");
+        }
+
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await Http.GetAsync($@"/api/Sites");
+            var resultContent = result.Content.ReadAsStringAsync().Result;
+            data = JsonSerializer.Deserialize<Site[]>(resultContent);
+            await _message.Success("初始化完成！！！");
+        }
+        catch (Exception ex)
+        {
+            await _message.Error($@"发生异常！！！{ex.Message}");
+        }
+
+    }
+    #endregion
+
+}
