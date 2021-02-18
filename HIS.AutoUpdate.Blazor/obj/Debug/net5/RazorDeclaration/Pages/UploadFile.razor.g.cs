@@ -149,7 +149,7 @@ using System.Text.Json;
     [Parameter]
     public string settingsSection { get; set; } = @"DW_HIS.DW.exe";
     [Parameter]
-    public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
+    public string configFileName { get; set; } = "E:\\Deployment\\HIS.AutoUpdate\\AutoUpgradeServerDefine.config";
     Dictionary<string, object> dict = new Dictionary<string, object>()
 {
         { "configFileName",@"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"}
@@ -158,7 +158,7 @@ using System.Text.Json;
     public class CreateUpdateModel
     {
         [Required]
-        public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
+        public string configFileName { get; set; } = "E:\\Deployment\\HIS.AutoUpdate\\AutoUpgradeServerDefine.config";
         [Required]
         public Dictionary<string, CurrentVersionURL> settingsSection { get; set; }
 
@@ -188,23 +188,9 @@ using System.Text.Json;
                     { settingsSection, new CurrentVersionURL() { currentVersionURL = model.CurrentVersionURL } }
                 }
             };
+            
 
-            var m = new HISClientConfigModel()
-            {
-                configFileName = configFileName,
-                settingsSection = new HISSettingsSection()
-                {
-                    DW_HIS_DW_exe = new CurrentVersionURL
-                    {
-                        currentVersionURL = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"
-                    }
-                }
-            };
-            var s = JsonSerializer.Serialize(createUpdateModel);
-
-            //var result = await Http.PostAsync($@"/api/ConfigurationManager", new ByteArrayContent(Convert.));
-
-            var result = await Http.PostAsJsonAsync<HISClientConfigModel>($@"/api/ConfigurationManager", m);
+            var result = await Http.PostAsJsonAsync<CreateUpdateModel>($@"/api/ConfigurationManager", createUpdateModel);
 
             string resultContent = result.Content.ReadAsStringAsync().Result;
         }

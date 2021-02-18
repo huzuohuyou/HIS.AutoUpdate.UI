@@ -1,5 +1,5 @@
 ﻿<StaticWebAssets Version="1.0">
-  <ContentRoot BasePath="/" Path="D:\GitHub\HIS.AutoUpdate.UI\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\" />
-  <ContentRoot BasePath="_content/AntDesign" Path="C:\Users\吴海龙\.nuget\packages\antdesign\0.6.0\build\..\staticwebassets\" />
-  <ContentRoot BasePath="_content/AntDesign.Pro.Layout" Path="C:\Users\吴海龙\.nuget\packages\antdesign.pro.layout\0.1.0-nightly-210129055145\build\..\staticwebassets\" />
+  <ContentRoot BasePath="/" Path="D:\Github\HIS.AutoUpdate.UI2\HIS.AutoUpdate.Blazor\bin\Debug\net5\wwwroot\" />
+  <ContentRoot BasePath="_content/AntDesign" Path="C:\Users\Administrator\.nuget\packages\antdesign\0.6.0\build\..\staticwebassets\" />
+  <ContentRoot BasePath="_content/AntDesign.Pro.Layout" Path="C:\Users\Administrator\.nuget\packages\antdesign.pro.layout\0.1.0-nightly-210129055145\build\..\staticwebassets\" />
 </StaticWebAssets>
