@@ -12,8 +12,7 @@
 <br />
 
 <Form Model="@model"
-      OnFinish="OnFinish"
-      OnFinishFailed="OnFinishFailed"
+      
       LabelColSpan="8"
       WrapperColSpan="16">
     <FormItem Label="站点">
@@ -50,45 +49,17 @@
         { "siteName", "HSPP.BizAPI"}
     };
 
-    public class CreateUpdateModel
-    {
-        [Required]
-        public string configFileName { get; set; } = "E:\\Deployment\\HIS.AutoUpdate\\AutoUpgradeServerDefine.config";
-        [Required]
-        public Dictionary<string, CurrentVersionURL> settingsSection { get; set; }
-
-    }
-
+   
     public class Model
     {
-        //[Required]
-        //public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
-        //[Required]
-        //public string settingsSection { get; set; } = @"DW_HIS.DW.exe";
+      
         [Required]
         public string CurrentVersionURL { get; set; } = "2.0.21.2011|HIS.DW_ER_3.0.21.2011.zip";
 
     }
     private Model model = new Model();
 
-    private async Task OnFinish(EditContext editContext)
-    {
-        try
-        {
 
-        }
-        catch (Exception ex)
-        {
-
-            await _message.Error("配置失败！！！");
-        }
-
-    }
-
-    private void OnFinishFailed(EditContext editContext)
-    {
-        Console.WriteLine($"Failed:{JsonSerializer.Serialize(model)}");
-    }
     List<UploadFileItem> fileList = new List<UploadFileItem>
     {
 
@@ -113,16 +84,7 @@
 
     }
 
-    public class ResponseModel
-    {
-        public string name { get; set; }
 
-        public string status { get; set; }
-
-        public string url { get; set; }
-
-        public string thumbUrl { get; set; }
-    }
 }
 
 <style>

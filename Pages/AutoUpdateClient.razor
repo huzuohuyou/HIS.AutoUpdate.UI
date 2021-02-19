@@ -9,7 +9,6 @@
 @using  System.Reflection;
 
 <PageContainer Title="更新HIS客户端">
-    <Button Type="primary" OnClick="@(()=>{ _visible = true; })">/api/ConfigurationManager</Button>
     <Table DataSource="data" PageSize="100" ScrollX="1000" ScrollY="340px">
         <Column @bind-Field="@context.MoudleName" Width="80" Title="模组" />
         <Column @bind-Field="@context.SettingsSectionName" Width="100" Title="模块" />
@@ -84,56 +83,58 @@
         try
         {
             var result = await Http.GetAsync($@"/api/ConfigurationManager");
-
-            string resultContent = result.Content.ReadAsStringAsync().Result;
-            var r = JsonSerializer.Deserialize<HISClientConfigModel[]>(resultContent);
-            if (r[0].configFileName.Contains("HIS.AutoUpdate"))
+            if (result.IsSuccessStatusCode)
             {
-                HISModal = r[0];
-                CMITModal = r[1];
-            }
-            else
-            {
-                HISModal = r[1];
-                CMITModal = r[0];
-            }
-
-            var array = GetPropertyInfoArray(typeof(HISSettingsSection));
-            var list = new List<Column>();
-            foreach (var item in array)
-            {
-                CurrentVersionURL c = (CurrentVersionURL)HISModal.settingsSection.GetType().GetProperty(item.Name).GetValue(HISModal.settingsSection, null) ?? new CurrentVersionURL();
-                var value = c.GetType().GetProperty("currentVersionURL").GetValue(c, null)?.ToString();
-                if (!string.IsNullOrWhiteSpace(value))
+                string resultContent = result.Content.ReadAsStringAsync().Result;
+                var r = JsonSerializer.Deserialize<HISClientConfigModel[]>(resultContent);
+                if (r[0].configFileName.Contains("HIS.AutoUpdate"))
                 {
-                    list.Add(new Column
-                    {
-                        ConfigFileName = HISModal.configFileName,
-                        MoudleName = "HIS.AutoUpdate",
-                        SettingsSectionName = item.Name,
-                        CurrentVersionURL = value,
-
-                    });
+                    HISModal = r[0];
+                    CMITModal = r[1];
                 }
-            }
-
-            foreach (var item in array)
-            {
-                CurrentVersionURL c = (CurrentVersionURL)CMITModal.settingsSection.GetType().GetProperty(item.Name).GetValue(CMITModal.settingsSection, null) ?? new CurrentVersionURL();
-                var value = c.GetType().GetProperty("currentVersionURL").GetValue(c, null)?.ToString();
-                if (!string.IsNullOrWhiteSpace(value))
+                else
                 {
-                    list.Add(new Column
-                    {
-                        ConfigFileName = CMITModal.configFileName,
-                        MoudleName = "CMIT.AutoUpdate",
-                        SettingsSectionName = item.Name,
-                        CurrentVersionURL = value,
-
-                    });
+                    HISModal = r[1];
+                    CMITModal = r[0];
                 }
+
+                var array = GetPropertyInfoArray(typeof(HISSettingsSection));
+                var list = new List<Column>();
+                foreach (var item in array)
+                {
+                    CurrentVersionURL c = (CurrentVersionURL)HISModal.settingsSection.GetType().GetProperty(item.Name).GetValue(HISModal.settingsSection, null) ?? new CurrentVersionURL();
+                    var value = c.GetType().GetProperty("currentVersionURL").GetValue(c, null)?.ToString();
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        list.Add(new Column
+                        {
+                            ConfigFileName = HISModal.configFileName,
+                            MoudleName = "HIS.AutoUpdate",
+                            SettingsSectionName = item.Name,
+                            CurrentVersionURL = value,
+
+                        });
+                    }
+                }
+
+                foreach (var item in array)
+                {
+                    CurrentVersionURL c = (CurrentVersionURL)CMITModal.settingsSection.GetType().GetProperty(item.Name).GetValue(CMITModal.settingsSection, null) ?? new CurrentVersionURL();
+                    var value = c.GetType().GetProperty("currentVersionURL").GetValue(c, null)?.ToString();
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        list.Add(new Column
+                        {
+                            ConfigFileName = CMITModal.configFileName,
+                            MoudleName = "CMIT.AutoUpdate",
+                            SettingsSectionName = item.Name,
+                            CurrentVersionURL = value,
+
+                        });
+                    }
+                }
+                data = list.ToArray();
             }
-            data = list.ToArray();
         }
         catch (Exception ex)
         {
