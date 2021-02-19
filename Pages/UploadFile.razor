@@ -72,6 +72,12 @@
 
     }
 
+    protected override void OnInitialized()
+    {
+        dict["configFileName"] = configFileName;
+        base.OnInitialized();
+    }
+
     public class Model
     {
         //[Required]

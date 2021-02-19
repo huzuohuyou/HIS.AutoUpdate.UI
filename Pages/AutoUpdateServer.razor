@@ -10,7 +10,7 @@
 @using System.Text;
 <PageContainer Title="更新HIS服务端">
     <Spin Spinning=loading Delay=500>
-        <Table DataSource="data" PageSize="100" ScrollX="800" ScrollY="340px">
+        <Table DataSource="data" PageSize="100" ScrollX="800" >
             <Column @bind-Field="@context.Name" Width="100" Title="站点" />
             <Column @bind-Field="@context.StateValue" Width="60" Title="网站状态">
                 <Switch CheckedChildren="已启动" UnCheckedChildren="已停止" OnChange="()=>SiteStateHasChanged(context)" @bind-Value="@context.StateValue"></Switch>
@@ -77,9 +77,9 @@
         try
         {
             var url = @"/api/AppPools/Recycle";
-            var siteName = new MultipartFormDataContent();
-            siteName.Add(new StringContent(data.Name), "appPoolName");
-            var result = await Http.PostAsync(url, siteName);
+            var poolName = new MultipartFormDataContent();
+            poolName.Add(new StringContent(data.PoolName), "appPoolName");
+            var result = await Http.PostAsync(url, poolName);
             var resultContent = result.Content.ReadAsStringAsync().Result;
             if (result.IsSuccessStatusCode)
             {
@@ -135,9 +135,9 @@
             {
                 url = @"/api/AppPools/Start";
             }
-            var siteName = new MultipartFormDataContent();
-            siteName.Add(new StringContent(data.Name), "appPoolName");
-            var result = await Http.PostAsync(url, siteName);
+            var poolName = new MultipartFormDataContent();
+            poolName.Add(new StringContent(data.PoolName), "appPoolName");
+            var result = await Http.PostAsync(url, poolName);
             var resultContent = result.Content.ReadAsStringAsync().Result;
             if (result.IsSuccessStatusCode)
             {

@@ -46,13 +46,23 @@
     public  string siteName { get; set; } = "HSPP.BizAPI";
     Dictionary<string, object> dict = new Dictionary<string, object>()
     {
-        { "siteName", "HSPP.BizAPI"}
+        { "siteName", ""}
     };
 
-   
+    protected override void OnInitialized()
+    {
+        dict["siteName"] = siteName;
+        base.OnInitialized();
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        Console.WriteLine($"OnAfterRender, firstRender:{firstRender}");
+        dict["siteName"] = siteName;
+        base.OnAfterRender(firstRender);
+    }
     public class Model
     {
-      
+
         [Required]
         public string CurrentVersionURL { get; set; } = "2.0.21.2011|HIS.DW_ER_3.0.21.2011.zip";
 
@@ -74,7 +84,7 @@
                 await _message.Success("文件上传成功！！！");
                 fileinfo.File.Url = fileinfo.File.ObjectURL;
             }
-            
+
         }
         catch (Exception ex)
         {
