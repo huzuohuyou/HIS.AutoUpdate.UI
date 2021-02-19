@@ -8,8 +8,9 @@
 @inject MessageService _message
 @using System.ComponentModel.DataAnnotations;
 @using System.Text.Json;
-
-<br />
+@using Microsoft.Extensions.Options;
+@inject IJSRuntime JSRuntime;
+@inject IOptionsSnapshot<MyProSettings> MyProSettings;
 
 <Form Model="@model"
       OnFinish="OnFinish"
@@ -29,7 +30,7 @@
     </FormItem>
     <FormItem Label="文件">
 
-        <Upload Action="http://192.168.5.212:20002/api/ConfigurationManager/UploadFile"
+        <Upload Action=@MyProSettings.Value.ClientUploadUri
                 Name="files"
                 @bind-FileList="fileList"
                 ShowButton="fileList?.Count < 1"
@@ -59,7 +60,7 @@
     [Parameter]
     public string configFileName { get; set; } = "E:\\Deployment\\HIS.AutoUpdate\\AutoUpgradeServerDefine.config";
     Dictionary<string, object> dict = new Dictionary<string, object>()
-    {
+{
         { "configFileName",@"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"}
     };
 
@@ -98,7 +99,7 @@
             {
                 configFileName = configFileName,
                 settingsSection = new Dictionary<string, CurrentVersionURL>()
-                {
+            {
                     { settingsSection, new CurrentVersionURL() { currentVersionURL = model.CurrentVersionURL } }
                 }
             };
@@ -128,6 +129,10 @@
             {
                 await _message.Success("文件上传成功！！！");
                 fileinfo.File.Url = fileinfo.File.ObjectURL;
+            }
+            else if (fileinfo.File.State == UploadState.Fail)
+            {
+                await _message.Error($@"上传失败！！！{fileinfo.File.FileName}");
             }
         }
         catch (Exception ex)

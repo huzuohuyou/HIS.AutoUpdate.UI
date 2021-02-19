@@ -8,21 +8,23 @@
 @inject MessageService _message
 @using System.ComponentModel.DataAnnotations;
 @using System.Text.Json;
-
-<br />
+@using HIS.AutoUpdate.Blazor.Utils;
+@using Microsoft.Extensions.Options;
+@inject IJSRuntime JSRuntime;
+@inject IOptionsSnapshot<MyProSettings> MyProSettings;
 
 <Form Model="@model"
-      
       LabelColSpan="8"
       WrapperColSpan="16">
     <FormItem Label="站点">
         <Input Placeholder="configFileName" @bind-Value="@siteName" />
     </FormItem>
 
-    
+
+
     <FormItem Label="文件">
 
-        <Upload Action="http://192.168.5.212:20002/api/Sites/UploadFile"
+        <Upload Action=@MyProSettings.Value.ServerUploadUri
                 Name="files"
                 @bind-FileList="fileList"
                 ShowButton="fileList?.Count < 1"
@@ -41,11 +43,11 @@
 
 @code
 {
-
+    string WebApiUri { get; set; }
     [Parameter]
-    public  string siteName { get; set; } = "HSPP.BizAPI";
+    public string siteName { get; set; } = "HSPP.BizAPI";
     Dictionary<string, object> dict = new Dictionary<string, object>()
-    {
+{
         { "siteName", ""}
     };
 
@@ -83,6 +85,10 @@
             {
                 await _message.Success("文件上传成功！！！");
                 fileinfo.File.Url = fileinfo.File.ObjectURL;
+            }
+            else if(fileinfo.File.State == UploadState.Fail)
+            {
+                await _message.Error($@"上传失败！！！{fileinfo.File.FileName}");
             }
 
         }

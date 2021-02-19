@@ -1,7 +1,6 @@
 using AntDesign.Pro.Layout;
+using HIS.AutoUpdate.Blazor.Models;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
@@ -20,6 +19,7 @@ namespace HIS.AutoUpdate.Blazor
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(Uri) });
             builder.Services.AddAntDesign();
             builder.Services.Configure<ProSettings>(builder.Configuration.GetSection("ProSettings"));
+            builder.Services.Configure<MyProSettings>(builder.Configuration.GetSection("ProSettings"));
             await builder.Build().RunAsync();
         }
     }
