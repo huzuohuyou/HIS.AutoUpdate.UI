@@ -1,25 +1,25 @@
 using AntDesign.Pro.Layout;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace HIS.AutoUpdate.Blazor
 {
     public class Program
     {
+
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
-
-            //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://192.168.5.212:20002") });
-            //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(@"http://localhost:5000/") });
+            var Uri = builder.Configuration.GetSection("ProSettings")["WebApiUri"];
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(Uri) });
             builder.Services.AddAntDesign();
             builder.Services.Configure<ProSettings>(builder.Configuration.GetSection("ProSettings"));
-
             await builder.Build().RunAsync();
         }
     }
