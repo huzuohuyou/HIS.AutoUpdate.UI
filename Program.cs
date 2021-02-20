@@ -19,6 +19,7 @@ namespace HIS.AutoUpdate.Blazor
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(Uri) });
             builder.Services.AddAntDesign();
             builder.Services.Configure<ProSettings>(builder.Configuration.GetSection("ProSettings"));
+
             builder.Services.Configure<MyProSettings>(builder.Configuration.GetSection("ProSettings"));
             await builder.Build().RunAsync();
         }

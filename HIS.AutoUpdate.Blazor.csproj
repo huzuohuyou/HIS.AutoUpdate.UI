@@ -6,6 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\AppSettings.cs" />
+    <Compile Remove="Models\CMITClientConfigModel.cs" />
+    <Compile Remove="Models\CMITSettingsSection.cs" />
+    <Compile Remove="Models\HISClientConfigModel.cs" />
+    <Compile Remove="Models\HISSettingsSection.cs" />
+    <Compile Remove="Models\ResponseModel.cs" />
+    <Compile Remove="Models\SitePoolCreateUpdateModel.cs" />
+    <Compile Remove="Models\UploadFile.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AntDesign" Version="0.7.0-nightly-2102190349" />
     <PackageReference Include="AntDesign.Pro.Layout" Version="0.1.0-*" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.0" />

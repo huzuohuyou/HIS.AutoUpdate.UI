@@ -10,7 +10,7 @@
 @using Microsoft.Extensions.Options;
 @inject IJSRuntime JSRuntime;
 @inject IOptionsSnapshot<MyProSettings> MyProSettings;
-
+@*@inject IOptionsSnapshot<Server[]> Servers;*@
 <Form Model="@model"
       OnFinish="OnFinish"
       OnFinishFailed="OnFinishFailed"
@@ -61,7 +61,7 @@
     [Parameter]
     public string configFileName { get; set; }
     Dictionary<string, object> dict = new Dictionary<string, object>()
-    {
+{
         { "configFileName",@""}
     };
 
@@ -84,7 +84,7 @@
         dict["configFileName"] = configFileName;
         base.OnAfterRender(firstRender);
     }
-    public class Model  { }
+    public class Model { }
     private Model model = new Model();
 
     private async Task OnFinish(EditContext editContext)
@@ -95,14 +95,14 @@
             {
                 configFileName = configFileName,
                 settingsSection = new Dictionary<string, CurrentVersionURL>()
-                {
+            {
                     { settingsSection, new CurrentVersionURL() { currentVersionURL = currentVersionURL } }
                 }
             };
             var result = await Http.PostAsJsonAsync<CreateUpdateModel>($@"/api/ConfigurationManager", createUpdateModel);
             if (result.IsSuccessStatusCode)
             {
-                await _message.Error("配置失败！！！");
+                await _message.Error("配置成功！！！");
             }
             string resultContent = result.Content.ReadAsStringAsync().Result;
         }

@@ -7,13 +7,15 @@
 @using System.Text.Json.Serialization
 @inject MessageService _message
 @using  System.Reflection;
-
+@using Microsoft.Extensions.Options;
+@inject IOptionsSnapshot<MyProSettings> MyProSettings;
+@*@inject IOptionsSnapshot<Server[]> Servers;*@
 <PageContainer Title="更新HIS客户端">
-    <Table DataSource="data" PageSize="100" ScrollX="1000" >
-        <Column @bind-Field="@context.MoudleName" Width="80" Title="模组" />
-        <Column @bind-Field="@context.SettingsSectionName" Width="100" Title="模块" />
-        <Column @bind-Field="@context.CurrentVersionURL" Width="150" Title="版本文件" />
-        <Column @bind-Field="@context.ConfigFileName" Width="150" Title="配置文件" Ellipsis />
+    <Table DataSource="data"  Bordered PageSize="100" ScrollX="1000">
+        <Column ColSpan="1" @bind-Field="@context.SettingsSectionName" Width="100"  RowSpan="@GetRowSpan(context.SettingsSectionName)" Title="模块"  SorterMultiple="1" SorterCompare="(a,b)=>a.CompareTo(b)"/>
+        <Column ColSpan="1" @bind-Field="@context.IP" Width="80" Title="服务器" />
+        <Column ColSpan="1" @bind-Field="@context.CurrentVersionURL" Width="150" Title="版本文件" Ellipsis/>
+        <Column ColSpan="1" @bind-Field="@context.ConfigFileName" Width="150" Title="配置文件" Ellipsis />
         <ActionColumn Title="操作" Width="60" Fixed="right">
             <Button Type="primary" Size="small" Shape="round" Icon="upload" OnClick="()=>Config(context)">上传 </Button>
 
@@ -31,7 +33,7 @@
     </Modal>
 </PageContainer>
 @code
-{       
+{
 
     #region 弹出框上传
 
@@ -57,6 +59,20 @@
 
 
     Column[] data { get; set; }
+    List<Column> list = new List<Column>();
+    string tempSettingsSectionName = "";
+    int index = 0;
+    private int GetRowSpan(string key, string columnTitle = "")
+    {
+        index++;
+        if (index%2==0)
+        {
+            return 0;
+        }
+        return 2;
+
+
+    }
 
     private PropertyInfo[] GetPropertyInfoArray(Type type)
     {
@@ -71,82 +87,87 @@
         return props;
     }
 
-    HISClientConfigModel HISModal = new HISClientConfigModel() { settingsSection = new HISSettingsSection() };
 
-    HISClientConfigModel CMITModal { get; set; }
 
-    private void Config(Column data) {
+    private void Config(Column data)
+    {
         _visible = true;
         configFileName = data.ConfigFileName;
         settingsSection = data.SettingsSectionName;
         currentVersionURL = data.CurrentVersionURL;
     }
 
-    public async Task ConfigurationManagerAsync()
+
+
+    public async Task<List<Column>> Do(string WebApiUri)
     {
+        var temp = new List<Column>();
         try
         {
-            var result = await Http.GetAsync($@"/api/ConfigurationManager");
+            var result = await Http.GetAsync($@"{ WebApiUri}/api/ConfigurationManager");
             if (result.IsSuccessStatusCode)
             {
                 string resultContent = result.Content.ReadAsStringAsync().Result;
-                var r = JsonSerializer.Deserialize<HISClientConfigModel[]>(resultContent);
-                if (r[0].configFileName.Contains("HIS.AutoUpdate"))
-                {
-                    HISModal = r[0];
-                    CMITModal = r[1];
-                }
-                else
-                {
-                    HISModal = r[1];
-                    CMITModal = r[0];
-                }
+                var collection = JsonSerializer.Deserialize<CustomSettingHandle[]>(resultContent);
 
-                var array = GetPropertyInfoArray(typeof(HISSettingsSection));
-                var list = new List<Column>();
-                foreach (var item in array)
+                foreach (var item in collection)
                 {
-                    CurrentVersionURL c = (CurrentVersionURL)HISModal.settingsSection.GetType().GetProperty(item.Name).GetValue(HISModal.settingsSection, null) ?? new CurrentVersionURL();
-                    var value = c.GetType().GetProperty("currentVersionURL").GetValue(c, null)?.ToString();
-                    if (!string.IsNullOrWhiteSpace(value))
+                    foreach (var key in item.SettingsSection.Keys)
                     {
-                        list.Add(new Column
+                        temp.Add(new Column
                         {
-                            ConfigFileName = HISModal.configFileName,
-                            MoudleName = "HIS.AutoUpdate",
-                            SettingsSectionName = item.Name,
-                            CurrentVersionURL = value,
+                            WebApiUri = WebApiUri,
+                            ConfigFileName = item.ConfigFileName,
+                            MoudleName = key,
+                            SettingsSectionName = key,
+                            CurrentVersionURL = item.SettingsSection[key]["CurrentVersionURL"].ToString(),
 
                         });
                     }
                 }
-
-                foreach (var item in array)
-                {
-                    CurrentVersionURL c = (CurrentVersionURL)CMITModal.settingsSection.GetType().GetProperty(item.Name).GetValue(CMITModal.settingsSection, null) ?? new CurrentVersionURL();
-                    var value = c.GetType().GetProperty("currentVersionURL").GetValue(c, null)?.ToString();
-                    if (!string.IsNullOrWhiteSpace(value))
-                    {
-                        list.Add(new Column
-                        {
-                            ConfigFileName = CMITModal.configFileName,
-                            MoudleName = "CMIT.AutoUpdate",
-                            SettingsSectionName = item.Name,
-                            CurrentVersionURL = value,
-
-                        });
-                    }
-                }
-                data = list.ToArray();
             }
         }
         catch (Exception ex)
         {
+            await _message.Error($@"{WebApiUri}=>{ex.Message}");
+        }
+        return temp;
+        //list = list.Union(temp).ToList(); ;
+        //data = list.ToArray();
+        //await _message.Info(data.Length.ToString());
+    }
 
+    public async Task ConfigurationManagerAsync()
+    {
+        try
+        {
+            list.Clear();
+            foreach (var item in MyProSettings.Value.Servers)
+            {
+                try
+                {
+                    var temp = await Do(item.WebApiUri);
+                    list = list.Union(temp).ToList();
+                    Console.WriteLine(temp.Count);
+                }
+                catch (Exception ex)
+                {
+                    await _message.Error(ex.Message);
+                }
+
+            }
+            Console.WriteLine("-1");
+            list.Sort((a, b) =>
+            {
+                var o = a.SettingsSectionName.CompareTo(b.SettingsSectionName);
+                return o;
+            });
+            data = list.ToArray();
+        }
+        catch (Exception ex)
+        {
             await _message.Error(ex.Message);
         }
-
-
     }
 
     protected override async Task OnInitializedAsync()
