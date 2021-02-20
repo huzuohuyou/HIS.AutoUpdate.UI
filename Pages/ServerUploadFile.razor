@@ -7,8 +7,6 @@
 @using System.Runtime.Serialization.Formatters;
 @inject MessageService _message
 @using System.ComponentModel.DataAnnotations;
-@using System.Text.Json;
-@using HIS.AutoUpdate.Blazor.Utils;
 @using Microsoft.Extensions.Options;
 @inject IJSRuntime JSRuntime;
 @inject IOptionsSnapshot<MyProSettings> MyProSettings;
@@ -45,9 +43,9 @@
 {
     string WebApiUri { get; set; }
     [Parameter]
-    public string siteName { get; set; } = "HSPP.BizAPI";
+    public string siteName { get; set; } 
     Dictionary<string, object> dict = new Dictionary<string, object>()
-{
+    {
         { "siteName", ""}
     };
 
@@ -66,7 +64,7 @@
     {
 
         [Required]
-        public string CurrentVersionURL { get; set; } = "2.0.21.2011|HIS.DW_ER_3.0.21.2011.zip";
+        public string CurrentVersionURL { get; set; } 
 
     }
     private Model model = new Model();

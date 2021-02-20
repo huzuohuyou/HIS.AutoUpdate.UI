@@ -7,7 +7,6 @@
 @using System.Runtime.Serialization.Formatters;
 @inject MessageService _message
 @using System.ComponentModel.DataAnnotations;
-@using System.Text.Json;
 @using Microsoft.Extensions.Options;
 @inject IJSRuntime JSRuntime;
 @inject IOptionsSnapshot<MyProSettings> MyProSettings;
@@ -26,7 +25,7 @@
     </FormItem>
     <FormItem Label="版本">
 
-        <Input Placeholder="CurrentVersionURL" @bind-Value="@context.CurrentVersionURL" />
+        <Input Placeholder="CurrentVersionURL" @bind-Value="@currentVersionURL" />
     </FormItem>
     <FormItem Label="文件">
 
@@ -56,18 +55,20 @@
 @code
 {
     [Parameter]
-    public string settingsSection { get; set; } = @"DW_HIS.DW.exe";
+    public string settingsSection { get; set; }
     [Parameter]
-    public string configFileName { get; set; } = "E:\\Deployment\\HIS.AutoUpdate\\AutoUpgradeServerDefine.config";
+    public string currentVersionURL { get; set; }
+    [Parameter]
+    public string configFileName { get; set; }
     Dictionary<string, object> dict = new Dictionary<string, object>()
-{
-        { "configFileName",@"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config"}
+    {
+        { "configFileName",@""}
     };
 
     public class CreateUpdateModel
     {
         [Required]
-        public string configFileName { get; set; } = "E:\\Deployment\\HIS.AutoUpdate\\AutoUpgradeServerDefine.config";
+        public string configFileName { get; set; }
         [Required]
         public Dictionary<string, CurrentVersionURL> settingsSection { get; set; }
 
@@ -78,17 +79,12 @@
         dict["configFileName"] = configFileName;
         base.OnInitialized();
     }
-
-    public class Model
+    protected override void OnAfterRender(bool firstRender)
     {
-        //[Required]
-        //public string configFileName { get; set; } = @"E:\Deployment\HIS.AutoUpdate\AutoUpgradeServerDefine.config";
-        //[Required]
-        //public string settingsSection { get; set; } = @"DW_HIS.DW.exe";
-        [Required]
-        public string CurrentVersionURL { get; set; } = "2.0.21.2011|HIS.DW_ER_3.0.21.2011.zip";
-
+        dict["configFileName"] = configFileName;
+        base.OnAfterRender(firstRender);
     }
+    public class Model  { }
     private Model model = new Model();
 
     private async Task OnFinish(EditContext editContext)
@@ -99,12 +95,15 @@
             {
                 configFileName = configFileName,
                 settingsSection = new Dictionary<string, CurrentVersionURL>()
-            {
-                    { settingsSection, new CurrentVersionURL() { currentVersionURL = model.CurrentVersionURL } }
+                {
+                    { settingsSection, new CurrentVersionURL() { currentVersionURL = currentVersionURL } }
                 }
             };
             var result = await Http.PostAsJsonAsync<CreateUpdateModel>($@"/api/ConfigurationManager", createUpdateModel);
-
+            if (result.IsSuccessStatusCode)
+            {
+                await _message.Error("配置失败！！！");
+            }
             string resultContent = result.Content.ReadAsStringAsync().Result;
         }
         catch (Exception ex)

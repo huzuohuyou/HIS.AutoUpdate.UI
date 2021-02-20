@@ -25,7 +25,9 @@
            OnCancel="@HandleCancel"
            Footer="null">
         <UploadFile ConfigFileName="@configFileName"
-                          settingsSection="@settingsSection"></UploadFile>
+                    currentVersionURL="@currentVersionURL"
+                    settingsSection="@settingsSection">
+        </UploadFile>
     </Modal>
 </PageContainer>
 @code
@@ -36,6 +38,7 @@
     bool _visible = false;
     string configFileName { get; set; }
     string settingsSection { get; set; }
+    string currentVersionURL { get; set; }
 
     private void HandleOk(MouseEventArgs e)
     {
@@ -76,6 +79,7 @@
         _visible = true;
         configFileName = data.ConfigFileName;
         settingsSection = data.SettingsSectionName;
+        currentVersionURL = data.CurrentVersionURL;
     }
 
     public async Task ConfigurationManagerAsync()
