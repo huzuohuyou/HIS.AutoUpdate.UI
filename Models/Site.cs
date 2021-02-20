@@ -1,9 +1,22 @@
 ﻿using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace HIS.AutoUpdate.Blazor.Models
 {
     public class Site
     {
+
+        private string _ip;
+        public string IP
+        {
+            get
+            {
+                Match m1 = Regex.Match(WebApiUri ?? "", @"(?<=http://).*?(?=:)");
+                return m1?.ToString();
+            }
+            set { _ip = value; }
+        }
+        public string WebApiUri { get; set; } = "";
         [JsonPropertyName("state")]
         public string State { get; set; }
 

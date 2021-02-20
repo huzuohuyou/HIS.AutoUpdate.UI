@@ -8,10 +8,14 @@
 @inject MessageService _message
 @using  System.Reflection;
 @using System.Text;
+@using Microsoft.Extensions.Options;
+@inject IOptionsSnapshot<MyProSettings> MyProSettings;
+
 <PageContainer Title="更新HIS服务端">
     <Spin Spinning=loading Delay=500>
-        <Table DataSource="data" PageSize="100" ScrollX="800" >
-            <Column @bind-Field="@context.Name" Width="100" Title="站点" />
+        <Table DataSource="data" PageSize="100" ScrollX="800">
+            <Column @bind-Field="@context.Name" Width="100" Title="站点" RowSpan="@GetRowSpan(context.Name)" />
+            <Column ColSpan="1" @bind-Field="@context.IP" Width="80" Title="服务器" />
             <Column @bind-Field="@context.StateValue" Width="60" Title="网站状态">
                 <Switch CheckedChildren="已启动" UnCheckedChildren="已停止" OnChange="()=>SiteStateHasChanged(context)" @bind-Value="@context.StateValue"></Switch>
             </Column>
@@ -30,16 +34,16 @@
             </ActionColumn>
         </Table>
     </Spin>
-        <Modal Title="上传文件"
-               Visible="@_visible"
-               OnOk="@HandleOk"
-               OnCancel="@HandleCancel"
-               Footer="null">
-            <ServerUploadFile siteName="@siteName"></ServerUploadFile>
-        </Modal>
+    <Modal Title="上传文件"
+           Visible="@_visible"
+           OnOk="@HandleOk"
+           OnCancel="@HandleCancel"
+           Footer="null">
+        <ServerUploadFile siteName="@siteName"></ServerUploadFile>
+    </Modal>
 </PageContainer>
 @code
-{       
+{
 
     #region 弹出框上传
     bool loading = false;
@@ -61,7 +65,18 @@
     #endregion
 
     #region 列表
+    int index = 0;
+    private int GetRowSpan(string key, string columnTitle = "")
+    {
+        index++;
+        if (index % 2 == 0)
+        {
+            return 0;
+        }
+        return 2;
 
+
+    }
 
     Site[] data { get; set; }
 
@@ -87,7 +102,7 @@
             }
             else
             {
-                var p= JsonSerializer.Deserialize<PostResonse>(resultContent);
+                var p = JsonSerializer.Deserialize<PostResonse>(resultContent);
                 await _message.Error($@"代码：{p.status}标题：{p.title}");
             }
         }
