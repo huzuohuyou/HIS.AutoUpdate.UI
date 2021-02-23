@@ -9,69 +9,114 @@
 @using  System.Reflection;
 @using Microsoft.Extensions.Options;
 @inject IOptionsSnapshot<MyProSettings> MyProSettings;
-@*@inject IOptionsSnapshot<Server[]> Servers;*@
+@inject NotificationService _notice
+@inherits LayoutComponentBase
 <PageContainer Title="更新HIS客户端">
-    <Table DataSource="data"  Bordered PageSize="100" ScrollX="1000">
-        <Column ColSpan="1" @bind-Field="@context.SettingsSectionName" Width="100"  RowSpan="@GetRowSpan(context.SettingsSectionName)" Title="模块"  SorterMultiple="1" SorterCompare="(a,b)=>a.CompareTo(b)"/>
-        <Column ColSpan="1" @bind-Field="@context.IP" Width="80" Title="服务器" />
-        <Column ColSpan="1" @bind-Field="@context.CurrentVersionURL" Width="150" Title="版本文件" Ellipsis/>
-        <Column ColSpan="1" @bind-Field="@context.ConfigFileName" Width="150" Title="配置文件" Ellipsis />
-        <ActionColumn Title="操作" Width="60" Fixed="right">
-            <Button Type="primary" Size="small" Shape="round" Icon="upload" OnClick="()=>Config(context)">上传 </Button>
+    <Spin Spinning=Loading>
+        <div style="display:flex; flex-wrap:wrap; ">
+            @foreach (var item in Clients)
+            {
+            <div class="hvr-shutter-out-horizontal">
+                <Card Style="width:262px;margin: 10px;display:block;" Bordered>
+                    <ChildContent>
+                        <CardMeta AvatarTemplate="@avatarTemplate" Title="@item.SettingsSectionName" Description="@item.SettingsSectionName" />
+                        <div style="text-align: center;padding:10px;">
+                            @foreach (var column in item.Columns)
+                            {
+                                <Badge Color="green" Text="@column.IP"></Badge>
+                            }
+                        </div>
 
-        </ActionColumn>
-    </Table>
-    <Modal Title="上传文件"
-           Visible="@_visible"
-           OnOk="@HandleOk"
-           OnCancel="@HandleCancel"
-           Footer="null">
-        <UploadFile ConfigFileName="@configFileName"
-                    currentVersionURL="@currentVersionURL"
-                    settingsSection="@settingsSection">
-        </UploadFile>
-    </Modal>
+                    </ChildContent>
+                    <ActionTemplate>
+                        <CardAction><Icon Type="setting" OnClick="@(()=> Config(item))" /></CardAction>
+                        <CardAction><Icon Type="edit" OnClick="@(()=> OnClick("edit"))" /></CardAction>
+                        <CardAction><Icon Type="ellipsis" OnClick="@(()=> OnClick("ellipsis"))" /></CardAction>
+                    </ActionTemplate>
+                </Card>
+            </div>
+               
+            }
+        </div>
+
+        <Table style="display:none;" DataSource="Data" Bordered PageSize="100" ScrollX="1000">
+            <Column ColSpan="1" @bind-Field="@context.SettingsSectionName" Width="100"
+                    RowSpan="@GetRowSpan(context.SettingsSectionName)"
+                    Title="模块" SorterMultiple="1"
+                    SorterCompare="(a,b)=>a.CompareTo(b)" />
+            <Column ColSpan="1" @bind-Field="@context.IP" Width="80" Title="服务器" />
+            <Column ColSpan="1" @bind-Field="@context.CurrentVersionURL" Width="150" Title="版本文件" Ellipsis />
+            <Column ColSpan="1" @bind-Field="@context.ConfigFileName" Width="150" Title="配置文件" Ellipsis />
+            <ActionColumn ColSpan="1" Title="操作" Width="60">
+                <Button Type="primary" Size="small" Shape="round" Icon="upload" OnClick="()=>Config(context)">上传 </Button>
+            </ActionColumn>
+        </Table>
+        <Modal Title="上传文件"
+               Visible="@Visible"
+               OnOk="@HandleOk"
+               OnCancel="@HandleCancel"
+               Footer="null">
+            <UploadFile Client="@currentClient">
+            </UploadFile>
+        </Modal>
+    </Spin>
 </PageContainer>
 @code
 {
+    RenderFragment actionSetting(Action clickAction) =>@<Icon Type="setting" OnClick="@clickAction" />;
 
-    #region 弹出框上传
+RenderFragment actionEdit(Action clickAction) =>@<Icon Type="edit" OnClick="@clickAction" />;
 
-    bool _visible = false;
-    string configFileName { get; set; }
-    string settingsSection { get; set; }
-    string currentVersionURL { get; set; }
+RenderFragment actionEllipsis(Action clickAction) => @<Icon Type="ellipsis" OnClick="@clickAction" />;
+
+RenderFragment avatarTemplate = @<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"></Avatar>;
+
+RenderFragment coverTemplate = @<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />;
+
+void OnClick(string icon)
+{
+Console.WriteLine($"icon {icon} is clicked");
+}
+
+}
+
+@code
+{
+
+    bool Loading = true;
+    bool Visible = false;
+    int Index = 0;
+    int RowSpanCount = 1;
+    string MoudleName = string.Empty;
+    Column Column = null;
+    List<string> IPs = new List<string>();
+    Column[] Data { get; set; } = new Column[0];
+    List<Column> List = new List<Column>();
+    List<Client> Clients = new List<Client>();
+
+    Column currentColumn { get; set; }
+    Client currentClient { get; set; }
 
     private void HandleOk(MouseEventArgs e)
     {
         Console.WriteLine(e);
-        _visible = false;
+        Visible = false;
     }
 
     private void HandleCancel(MouseEventArgs e)
     {
         Console.WriteLine(e);
-        _visible = false;
+        Visible = false;
     }
-    #endregion
 
-    #region 列表
-
-
-    Column[] data { get; set; }
-    List<Column> list = new List<Column>();
-    string tempSettingsSectionName = "";
-    int index = 0;
     private int GetRowSpan(string key, string columnTitle = "")
     {
-        index++;
-        if (index%2==0)
+        Index++;
+        if (Index % RowSpanCount == 0)
         {
             return 0;
         }
-        return 2;
-
-
+        return RowSpanCount;
     }
 
     private PropertyInfo[] GetPropertyInfoArray(Type type)
@@ -87,17 +132,17 @@
         return props;
     }
 
-
-
     private void Config(Column data)
     {
-        _visible = true;
-        configFileName = data.ConfigFileName;
-        settingsSection = data.SettingsSectionName;
-        currentVersionURL = data.CurrentVersionURL;
+        Visible = true;
+        currentColumn = data;
     }
 
-
+    private void Config(Client data)
+    {
+        Visible = true;
+        currentClient = data;
+    }
 
     public async Task<List<Column>> Do(string WebApiUri)
     {
@@ -107,6 +152,7 @@
             var result = await Http.GetAsync($@"{ WebApiUri}/api/ConfigurationManager");
             if (result.IsSuccessStatusCode)
             {
+                await NoticeWithIcon(NotificationType.Success, WebApiUri, $@"成功连接服务：{WebApiUri}");
                 string resultContent = result.Content.ReadAsStringAsync().Result;
                 var collection = JsonSerializer.Deserialize<CustomSettingHandle[]>(resultContent);
 
@@ -129,25 +175,34 @@
         }
         catch (Exception ex)
         {
-            await _message.Error($@"{WebApiUri}=>{ex.Message}");
+            RowSpanCount--;
+            await NoticeWithIcon(NotificationType.Error, WebApiUri, ex.Message.Equals("TypeError: Failed to fetch") ? $@"无法连接到服务:{WebApiUri}" : ex.Message);
         }
         return temp;
-        //list = list.Union(temp).ToList(); ;
-        //data = list.ToArray();
-        //await _message.Info(data.Length.ToString());
     }
 
-    public async Task ConfigurationManagerAsync()
+    private async Task NoticeWithIcon(NotificationType type, string WebApiUri, string Description)
+    {
+        await _notice.Open(new NotificationConfig()
+        {
+            Message = "客户端通知",
+            Duration = 0,
+            Description = Description,
+            NotificationType = type
+        });
+    }
+
+    public async Task<Column[]> ConfigurationManagerAsync()
     {
         try
         {
-            list.Clear();
+            List.Clear();
             foreach (var item in MyProSettings.Value.Servers)
             {
                 try
                 {
                     var temp = await Do(item.WebApiUri);
-                    list = list.Union(temp).ToList();
+                    List = List.Union(temp).ToList();
                     Console.WriteLine(temp.Count);
                 }
                 catch (Exception ex)
@@ -156,25 +211,39 @@
                 }
 
             }
-            Console.WriteLine("-1");
-            list.Sort((a, b) =>
+            List.Sort((a, b) =>
             {
                 var o = a.SettingsSectionName.CompareTo(b.SettingsSectionName);
                 return o;
             });
-            data = list.ToArray();
+            Loading = false;
         }
         catch (Exception ex)
         {
             await _message.Error(ex.Message);
         }
+        return List.ToArray();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await ConfigurationManagerAsync();
+        RowSpanCount = MyProSettings.Value.Servers.Length;
+        Data = await ConfigurationManagerAsync();
+        var client = new Client("");
+        foreach (var item in Data)
+        {
+            if (item.SettingsSectionName.Equals(client.SettingsSectionName))
+            {
+                client.Columns.Add(item);
+            }
+            else
+            {
+                client = new Client(item.SettingsSectionName);
+                client.Columns.Add(item);
+                Clients.Add(client);
+            }
 
+        }
     }
-    #endregion
 
 }

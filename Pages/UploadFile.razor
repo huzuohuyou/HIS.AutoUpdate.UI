@@ -8,117 +8,184 @@
 @inject MessageService _message
 @using System.ComponentModel.DataAnnotations;
 @using Microsoft.Extensions.Options;
+@using System.Text.RegularExpressions;
 @inject IJSRuntime JSRuntime;
+@inject NotificationService _notice
 @inject IOptionsSnapshot<MyProSettings> MyProSettings;
 @*@inject IOptionsSnapshot<Server[]> Servers;*@
-<Form Model="@model"
+
+
+
+
+<Form Model="@column"
       OnFinish="OnFinish"
       OnFinishFailed="OnFinishFailed"
       LabelColSpan="8"
       WrapperColSpan="16">
-    <FormItem Label="配置文件">
-        <Input Placeholder="configFileName" @bind-Value="@configFileName" />
-    </FormItem>
+    @*<FormItem Label="IP">
+            <Badge Color="green" Text="@item.IP"></Badge>
+        </FormItem>*@
+    @*<FormItem Label="配置文件">
+            <Input Disabled Placeholder="configFileName" @bind-Value="@item.ConfigFileName" />
+        </FormItem>
 
-    <FormItem Label="模块">
-        <Input Placeholder="settingsSection" @bind-Value="@settingsSection" />
-    </FormItem>
-    <FormItem Label="版本">
+        <FormItem Label="模块">
+            <Input Disabled Placeholder="settingsSection" @bind-Value="@item.SettingsSectionName" />
+        </FormItem>*@
+     <FormItem Label="版本变更">
+                <Input Placeholder="CurrentVersionURL" @bind-Value="@Client.Columns.FirstOrDefault().CurrentVersionURL" />
+            </FormItem>
+    @foreach (var item in Client.Columns)
+    {
+        @if (Client.Columns.IndexOf(item) == 0)
+        {
+            <FormItem Label="@item.IP">
+                <Upload Action=@item.ClientUploadUri
+                        Name="files"
+                        Accept=".zip"
+                        @bind-FileList="fileList"
+                        ShowButton="fileList?.Count < 1"
+                        Data="dict"
+                        ListType="picture-card"
+                        OnChange="HandleChange">
+                    <div>
+                        <Icon Type="plus"></Icon>
+                        <div className="ant-upload-text">Upload</div>
+                    </div>
+                </Upload>
 
-        <Input Placeholder="CurrentVersionURL" @bind-Value="@currentVersionURL" />
-    </FormItem>
-    <FormItem Label="文件">
+            </FormItem>
+        }
+        else if (Client.Columns.IndexOf(item) == 1)
+        {
+            <FormItem Label="@item.IP">
+                <Upload Action=@item.ClientUploadUri
+                        Name="files"
+                        Accept=".zip"
+                        @bind-FileList="fileList2"
+                        ShowButton="fileList2?.Count < 1"
+                        Data="dict"
+                        ListType="picture-card"
+                        OnChange="HandleChange2">
+                    <div>
+                        <Icon Type="plus"></Icon>
+                        <div className="ant-upload-text">Upload</div>
+                    </div>
+                </Upload>
 
-        <Upload Action=@MyProSettings.Value.ClientUploadUri
-                Name="files"
-                @bind-FileList="fileList"
-                ShowButton="fileList?.Count < 1"
-                ListType="picture-card"
-                Data="dict"
-                OnChange="HandleChange">
-            <div>
-                <Icon Type="plus"></Icon>
-                <div className="ant-upload-text">Upload</div>
-            </div>
+            </FormItem>
+        }
+        else if (Client.Columns.IndexOf(item) == 2)
+        {
+            <FormItem Label="@item.IP">
+                <Upload Action=@item.ClientUploadUri
+                        Name="files"
+                        Accept=".zip"
+                        @bind-FileList="fileList3"
+                        ShowButton="fileList2?.Count < 1"
+                        Data="dict"
+                        ListType="picture-card"
+                        OnChange="HandleChange3">
+                    <div>
+                        <Icon Type="plus"></Icon>
+                        <div className="ant-upload-text">Upload</div>
+                    </div>
+                </Upload>
+            </FormItem>
+        }
 
-        </Upload>
-    </FormItem>
+    }
+        <FormItem WrapperColOffset="8" WrapperColSpan="16">
+            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                提交
+            </Button>
+        </FormItem>
+    </Form>
 
-    <FormItem WrapperColOffset="8" WrapperColSpan="16">
-        <Button Type="@ButtonType.Primary" HtmlType="submit">
-            提交
-        </Button>
-    </FormItem>
-</Form>
+
+
+
 
 
 @code
 {
-    [Parameter]
-    public string settingsSection { get; set; }
-    [Parameter]
-    public string currentVersionURL { get; set; }
-    [Parameter]
-    public string configFileName { get; set; }
-    Dictionary<string, object> dict = new Dictionary<string, object>()
-{
-        { "configFileName",@""}
-    };
+    //[Parameter]
+    //public Column currentColumn { get; set; }
 
-    public class CreateUpdateModel
-    {
-        [Required]
-        public string configFileName { get; set; }
-        [Required]
-        public Dictionary<string, CurrentVersionURL> settingsSection { get; set; }
-
-    }
+    [Parameter]
+    public Client Client { get; set; }
+    List<UploadFileItem> fileList = new List<UploadFileItem> { };
+    List<UploadFileItem> fileList2 = new List<UploadFileItem> { };
+    List<UploadFileItem> fileList3 = new List<UploadFileItem> { };
+    Dictionary<string, object> dict = new Dictionary<string, object>() { { "configFileName", @"" } };
+    Column column { get; set; } = new Column();
 
     protected override void OnInitialized()
     {
-        dict["configFileName"] = configFileName;
+        dict["configFileName"] = Client.Columns.FirstOrDefault().ConfigFileName;
         base.OnInitialized();
     }
     protected override void OnAfterRender(bool firstRender)
     {
-        dict["configFileName"] = configFileName;
+        dict["configFileName"] = Client.Columns.FirstOrDefault().ConfigFileName;
         base.OnAfterRender(firstRender);
     }
-    public class Model { }
-    private Model model = new Model();
+
+    private async Task NoticeWithIcon(NotificationType type, string Message, string Description)
+    {
+        await _notice.Open(new NotificationConfig()
+        {
+            Message = Message,
+            Duration = 0,
+            Description = Description,
+            NotificationType = type
+        });
+    }
 
     private async Task OnFinish(EditContext editContext)
     {
         try
         {
-            var createUpdateModel = new CreateUpdateModel()
+            foreach (var item in Client.Columns)
             {
-                configFileName = configFileName,
-                settingsSection = new Dictionary<string, CurrentVersionURL>()
-            {
-                    { settingsSection, new CurrentVersionURL() { currentVersionURL = currentVersionURL } }
+                try
+                {
+                    var createUpdateModel = new CreateUpdateModel()
+                    {
+                        configFileName = item.ConfigFileName,
+                        settingsSection = new Dictionary<string, CurrentVersionURL>() {
+                            { item.SettingsSectionName, new CurrentVersionURL() { currentVersionURL = item.CurrentVersionURL } }
+                        }
+                    };
+                    var result = await Http.PostAsJsonAsync<CreateUpdateModel>($@"{item.WebApiUri}/api/ConfigurationManager", createUpdateModel);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        await NoticeWithIcon(NotificationType.Success, "更新配置", $@"{item.WebApiUri}配置成功！！！");
+                    }
+                    else
+                    {
+                        await NoticeWithIcon(NotificationType.Warning, "更新配置", $@"{item.WebApiUri}配置失败！！！");
+                    }
                 }
-            };
-            var result = await Http.PostAsJsonAsync<CreateUpdateModel>($@"/api/ConfigurationManager", createUpdateModel);
-            if (result.IsSuccessStatusCode)
-            {
-                await _message.Error("配置成功！！！");
+                catch (Exception ex)
+                {
+                    await NoticeWithIcon(NotificationType.Error, "异常", $@"{item.WebApiUri}-{item.SettingsSectionName}-{ex.Message}");
+                }
             }
-            string resultContent = result.Content.ReadAsStringAsync().Result;
         }
         catch (Exception ex)
         {
 
-            await _message.Error("配置失败！！！");
+            await NoticeWithIcon(NotificationType.Error, "异常", ex.Message);
         }
 
     }
 
     private void OnFinishFailed(EditContext editContext)
     {
-        Console.WriteLine($"Failed:{JsonSerializer.Serialize(model)}");
+
     }
-    List<UploadFileItem> fileList = new List<UploadFileItem> { };
+
 
     async Task HandleChange(UploadInfo fileinfo)
     {
@@ -126,23 +193,77 @@
         {
             if (fileinfo.File.State == UploadState.Success)
             {
-                await _message.Success("文件上传成功！！！");
+                Match m1 = Regex.Match(fileinfo.File.FileName ?? "", @"(?<=_).*?(?=.zip)");
+                foreach (var item in Client.Columns)
+                {
+                    item.CurrentVersionURL = $@"{ m1?.ToString()}|{fileinfo.File.FileName}";
+                }
+                await NoticeWithIcon(NotificationType.Success, "操作", "上传成功！！");
                 fileinfo.File.Url = fileinfo.File.ObjectURL;
             }
             else if (fileinfo.File.State == UploadState.Fail)
             {
-                await _message.Error($@"上传失败！！！{fileinfo.File.FileName}");
+                await NoticeWithIcon(NotificationType.Warning, "失败", "上传失败！！");
             }
         }
         catch (Exception ex)
         {
 
-            await _message.Error(ex.Message);
+            await NoticeWithIcon(NotificationType.Error, "异常", ex.Message);
         }
-
     }
 
+    async Task HandleChange2(UploadInfo fileinfo)
+    {
+        try
+        {
+            if (fileinfo.File.State == UploadState.Success)
+            {
+                Match m1 = Regex.Match(fileinfo.File.FileName ?? "", @"(?<=_).*?(?=.zip)");
+                foreach (var item in Client.Columns)
+                {
+                    item.CurrentVersionURL = $@"{ m1?.ToString()}|{fileinfo.File.FileName}";
+                }
+                await NoticeWithIcon(NotificationType.Success, "操作", "上传成功！！");
+                fileinfo.File.Url = fileinfo.File.ObjectURL;
+            }
+            else if (fileinfo.File.State == UploadState.Fail)
+            {
+                await NoticeWithIcon(NotificationType.Warning, "失败", "上传失败！！");
+            }
+        }
+        catch (Exception ex)
+        {
 
+            await NoticeWithIcon(NotificationType.Error, "异常", ex.Message);
+        }
+    }
+
+    async Task HandleChange3(UploadInfo fileinfo)
+    {
+        try
+        {
+            if (fileinfo.File.State == UploadState.Success)
+            {
+                Match m1 = Regex.Match(fileinfo.File.FileName ?? "", @"(?<=_).*?(?=.zip)");
+                foreach (var item in Client.Columns)
+                {
+                    item.CurrentVersionURL = $@"{ m1?.ToString()}|{fileinfo.File.FileName}";
+                }
+                await NoticeWithIcon(NotificationType.Success, "操作", "上传成功！！");
+                fileinfo.File.Url = fileinfo.File.ObjectURL;
+            }
+            else if (fileinfo.File.State == UploadState.Fail)
+            {
+                await NoticeWithIcon(NotificationType.Warning, "失败", "上传失败！！");
+            }
+        }
+        catch (Exception ex)
+        {
+
+            await NoticeWithIcon(NotificationType.Error, "异常", ex.Message);
+        }
+    }
 }
 
 <style>

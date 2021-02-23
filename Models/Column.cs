@@ -13,11 +13,19 @@ namespace HIS.AutoUpdate.Blazor.Models
         {
             get
             {
-                Match m1 = Regex.Match(WebApiUri??"", @"(?<=http://).*?(?=:)");
+                Match m1 = Regex.Match(WebApiUri ?? "", @"(?<=http://).*?(?=:)");
                 return m1?.ToString();
             }
             set { _ip = value; }
         }
+        public string ClientUploadUri
+        {
+            get
+            {
+                return $@"{WebApiUri}/api/ConfigurationManager/UploadFile";
+            }
+        }
+
         public string WebApiUri { get; set; } = "";
         public string ConfigFileName { get; set; }
 

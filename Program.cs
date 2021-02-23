@@ -15,8 +15,8 @@ namespace HIS.AutoUpdate.Blazor
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
-            var Uri = builder.Configuration.GetSection("ProSettings")["WebApiUri"];
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(Uri) });
+            //var Uri = builder.Configuration.GetSection("ProSettings")["WebApiUri"];
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri($@"http://127.0.0.1:20002") });
             builder.Services.AddAntDesign();
             builder.Services.Configure<ProSettings>(builder.Configuration.GetSection("ProSettings"));
 

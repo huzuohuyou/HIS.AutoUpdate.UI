@@ -15,15 +15,12 @@
       LabelColSpan="8"
       WrapperColSpan="16">
     <FormItem Label="站点">
-        <Input Placeholder="configFileName" @bind-Value="@siteName" />
+        <Input Disabled Placeholder="configFileName" @bind-Value="@Site.Name" />
     </FormItem>
-
-
-
     <FormItem Label="文件">
-
-        <Upload Action=@MyProSettings.Value.ServerUploadUri
+        <Upload Action=@Site.ServerUploadUri
                 Name="files"
+                accept=".zip"
                 @bind-FileList="fileList"
                 ShowButton="fileList?.Count < 1"
                 ListType="picture-card"
@@ -33,7 +30,6 @@
                 <Icon Type="plus"></Icon>
                 <div className="ant-upload-text">Upload</div>
             </div>
-
         </Upload>
     </FormItem>
 </Form>
@@ -41,9 +37,10 @@
 
 @code
 {
-    string WebApiUri { get; set; }
     [Parameter]
-    public string siteName { get; set; } 
+    public Site Site { get; set; }
+    private Model model = new Model();
+
     Dictionary<string, object> dict = new Dictionary<string, object>()
     {
         { "siteName", ""}
@@ -51,24 +48,24 @@
 
     protected override void OnInitialized()
     {
-        dict["siteName"] = siteName;
+        dict["siteName"] = Site.Name;
         base.OnInitialized();
     }
+
     protected override void OnAfterRender(bool firstRender)
     {
         Console.WriteLine($"OnAfterRender, firstRender:{firstRender}");
-        dict["siteName"] = siteName;
+        dict["siteName"] = Site.Name;
         base.OnAfterRender(firstRender);
     }
+
     public class Model
     {
 
         [Required]
-        public string CurrentVersionURL { get; set; } 
+        public string CurrentVersionURL { get; set; }
 
     }
-    private Model model = new Model();
-
 
     List<UploadFileItem> fileList = new List<UploadFileItem>
     {

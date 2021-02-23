@@ -17,6 +17,13 @@ namespace HIS.AutoUpdate.Blazor.Models
             set { _ip = value; }
         }
         public string WebApiUri { get; set; } = "";
+        public string ServerUploadUri
+        {
+            get
+            {
+                return $@"{WebApiUri}/api/Sites/UploadFile";
+            }
+        }
         [JsonPropertyName("state")]
         public string State { get; set; }
 

@@ -10,80 +10,114 @@
 @using System.Text;
 @using Microsoft.Extensions.Options;
 @inject IOptionsSnapshot<MyProSettings> MyProSettings;
+@inject NotificationService _notice
 
 <PageContainer Title="更新HIS服务端">
-    <Spin Spinning=loading Delay=500>
-        <Table DataSource="data" PageSize="100" ScrollX="800">
-            <Column @bind-Field="@context.Name" Width="100" Title="站点" RowSpan="@GetRowSpan(context.Name)" />
+    <Spin Spinning=Loading >
+        <Table DataSource="Data" Bordered PageSize="100" ScrollX="800">
+            <Column ColSpan="1" @bind-Field="@context.Name" Width="100" Title="站点" 
+                    RowSpan="@GetRowSpan(context.Name)"
+                    SorterCompare="(a,b)=>a.CompareTo(b)" />
             <Column ColSpan="1" @bind-Field="@context.IP" Width="80" Title="服务器" />
             <Column @bind-Field="@context.StateValue" Width="60" Title="网站状态">
                 <Switch CheckedChildren="已启动" UnCheckedChildren="已停止" OnChange="()=>SiteStateHasChanged(context)" @bind-Value="@context.StateValue"></Switch>
             </Column>
-            <Column @bind-Field="@context.PhysicalPath" Width="150" Title="目录" />
-            <ActionColumn Title="网站操作" Width="60" Fixed="right">
+            <Column ColSpan="1" @bind-Field="@context.PhysicalPath" Width="150" Title="目录" />
+            <ActionColumn ColSpan="1" Title="网站操作" Width="60" Fixed="right" >
                 <Button Type="primary" Size="small" Shape="round" Icon="upload" OnClick="()=>Config(context)">上传 </Button>
 
             </ActionColumn>
-            <Column @bind-Field="@context.PoolName" Width="100" Title="应用程序池" />
-            <Column @bind-Field="@context.PoolStateValue" Width="60" Title="程序池状态" Ellipsis>
+            <Column ColSpan="1" @bind-Field="@context.PoolName" Width="100" Title="应用程序池" />
+            <Column ColSpan="1" @bind-Field="@context.PoolStateValue" Width="60" Title="程序池状态" Ellipsis>
                 <Switch CheckedChildren="已启动" UnCheckedChildren="已停止" OnChange="()=>PoolStateHasChanged(context)" @bind-Value="@context.PoolStateValue"></Switch>
             </Column>
-            <ActionColumn Title="程序池操作" Width="60" Fixed="right">
+            <ActionColumn ColSpan="1" Title="程序池操作" Width="60" Fixed="right">
                 <Button Type="primary" Size="small" Shape="round" Icon="redo" OnClick="()=>Recycle(context)">回收</Button>
-
             </ActionColumn>
         </Table>
     </Spin>
     <Modal Title="上传文件"
-           Visible="@_visible"
+           Visible="@Visible"
            OnOk="@HandleOk"
            OnCancel="@HandleCancel"
            Footer="null">
-        <ServerUploadFile siteName="@siteName"></ServerUploadFile>
+        <ServerUploadFile site="@Site"></ServerUploadFile>
     </Modal>
 </PageContainer>
 @code
 {
 
-    #region 弹出框上传
-    bool loading = false;
-    bool _visible = false;
-    string siteName { get; set; }
-
+    bool Loading = true;
+    bool Visible = false;
+    int Index = 0;
+    int RowSpanCount = 1;
+    Site Site { get; set; }
+    Site[] Data { get; set; }
+    List<Site> List = new List<Site>();
 
     private void HandleOk(MouseEventArgs e)
     {
         Console.WriteLine(e);
-        _visible = false;
+        Visible = false;
     }
 
     private void HandleCancel(MouseEventArgs e)
     {
         Console.WriteLine(e);
-        _visible = false;
+        Visible = false;
     }
-    #endregion
 
-    #region 列表
-    int index = 0;
+    public async Task<List<Site>> Do(string WebApiUri)
+    {
+        var temp = new List<Site>();
+        try
+        {
+            var result = await Http.GetAsync($@"{ WebApiUri}/api/Sites");
+            if (result.IsSuccessStatusCode)
+            {
+                await NoticeWithIcon(NotificationType.Success,  WebApiUri, $@"成功连接服务：{WebApiUri}");
+
+                var resultContent = result.Content.ReadAsStringAsync().Result;
+                temp = JsonSerializer.Deserialize<Site[]>(resultContent).ToList();
+                temp.ForEach(r =>
+                {
+                    r.WebApiUri = WebApiUri;
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            RowSpanCount--;
+            await NoticeWithIcon(NotificationType.Error,  WebApiUri, ex.Message.Equals("TypeError: Failed to fetch") ? $@"无法连接到服务:{WebApiUri}" : ex.Message);
+        }
+        return temp;
+    }
+    private async Task NoticeWithIcon(NotificationType type,  string WebApiUri,string Description)
+    {
+        await _notice.Open(new NotificationConfig()
+        {
+            Message = "服务端通知",
+            Duration = 0,
+            Description = Description,
+            NotificationType = type
+        });
+    }
+
+
     private int GetRowSpan(string key, string columnTitle = "")
     {
-        index++;
-        if (index % 2 == 0)
+        Index++;
+        if (Index % RowSpanCount == 0)
         {
             return 0;
         }
-        return 2;
-
-
+        return RowSpanCount;
     }
-
-    Site[] data { get; set; }
 
     private void Config(Site data)
     {
-        _visible = true;
-        siteName = data.Name;
+        Visible = true;
+        Site = data;
     }
 
 
@@ -91,7 +125,7 @@
     {
         try
         {
-            var url = @"/api/AppPools/Recycle";
+            var url = $@"{data.WebApiUri}/api/AppPools/Recycle";
             var poolName = new MultipartFormDataContent();
             poolName.Add(new StringContent(data.PoolName), "appPoolName");
             var result = await Http.PostAsync(url, poolName);
@@ -111,11 +145,12 @@
             await _message.Error($@"发生异常！！！{ex.Message}");
         }
     }
+
     private async Task SiteStateHasChanged(Site data)
     {
         try
         {
-            var url = @"/api/Sites/Stop";
+            var url = $@"{data.WebApiUri}/api/Sites/Stop";
             if (data.StateValue.Equals(true))
             {
                 url = @"/api/Sites/Start";
@@ -145,7 +180,7 @@
     {
         try
         {
-            var url = @"/api/AppPools/Stop";
+            var url = $@"{data.WebApiUri}/api/AppPools/Stop";
             if (data.PoolStateValue.Equals(true))
             {
                 url = @"/api/AppPools/Start";
@@ -176,22 +211,36 @@
     {
         try
         {
-            var result = await Http.GetAsync($@"/api/Sites");
-            if (result.IsSuccessStatusCode)
+            RowSpanCount = MyProSettings.Value.Servers.Length;
+            List.Clear();
+            foreach (var item in MyProSettings.Value.Servers)
             {
-                loading = true;
-                var resultContent = result.Content.ReadAsStringAsync().Result;
-                data = JsonSerializer.Deserialize<Site[]>(resultContent);
-                loading = false;
+                try
+                {
+                    var temp = await Do(item.WebApiUri);
+                    List = List.Union(temp).ToList();
+                    Console.WriteLine(temp.Count);
+                }
+                catch (Exception ex)
+                {
+                    await _message.Error(ex.Message);
+                }
+
             }
+            List.Sort((a, b) =>
+            {
+                var o = a.Name.CompareTo(b.Name);
+                return o;
+            });
+            Loading = false;
+            Data = List.ToArray();
         }
         catch (Exception ex)
         {
-            loading = false;
+            Loading = false;
             await _message.Error($@"发生异常！！！{ex.Message}");
         }
 
     }
-    #endregion
 
 }
