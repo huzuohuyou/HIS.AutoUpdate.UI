@@ -30,8 +30,8 @@
                     </ChildContent>
                     <ActionTemplate>
                         <CardAction><Icon Type="setting" OnClick="@(()=> Config(item))" /></CardAction>
-                        <CardAction><Icon Type="edit" OnClick="@(()=> OnClick("edit"))" /></CardAction>
-                        <CardAction><Icon Type="ellipsis" OnClick="@(()=> OnClick("ellipsis"))" /></CardAction>
+                        <CardAction><Icon Type="edit" OnClick="@(()=> Config(item))" /></CardAction>
+                        <CardAction><Icon Type="ellipsis" OnClick="@(()=> Config(item))" /></CardAction>
                     </ActionTemplate>
                 </Card>
             </div>
@@ -39,7 +39,7 @@
             }
         </div>
 
-        <Table style="display:none;" DataSource="Data" Bordered PageSize="100" ScrollX="1000">
+        @*<Table style="display:none;" DataSource="Data" Bordered PageSize="100" ScrollX="1000">
             <Column ColSpan="1" @bind-Field="@context.SettingsSectionName" Width="100"
                     RowSpan="@GetRowSpan(context.SettingsSectionName)"
                     Title="模块" SorterMultiple="1"
@@ -50,7 +50,7 @@
             <ActionColumn ColSpan="1" Title="操作" Width="60">
                 <Button Type="primary" Size="small" Shape="round" Icon="upload" OnClick="()=>Config(context)">上传 </Button>
             </ActionColumn>
-        </Table>
+        </Table>*@
         <Modal Title="上传文件"
                Visible="@Visible"
                OnOk="@HandleOk"
@@ -61,24 +61,7 @@
         </Modal>
     </Spin>
 </PageContainer>
-@code
-{
-    RenderFragment actionSetting(Action clickAction) =>@<Icon Type="setting" OnClick="@clickAction" />;
 
-RenderFragment actionEdit(Action clickAction) =>@<Icon Type="edit" OnClick="@clickAction" />;
-
-RenderFragment actionEllipsis(Action clickAction) => @<Icon Type="ellipsis" OnClick="@clickAction" />;
-
-RenderFragment avatarTemplate = @<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"></Avatar>;
-
-RenderFragment coverTemplate = @<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />;
-
-void OnClick(string icon)
-{
-Console.WriteLine($"icon {icon} is clicked");
-}
-
-}
 
 @code
 {
