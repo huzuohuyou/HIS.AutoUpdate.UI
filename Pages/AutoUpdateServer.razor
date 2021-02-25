@@ -13,9 +13,96 @@
 @inject NotificationService _notice
 
 <PageContainer Title="更新HIS服务端">
-    <Spin Spinning=Loading >
-        <Table DataSource="Data" Bordered PageSize="100" ScrollX="800">
-            <Column ColSpan="1" @bind-Field="@context.Name" Width="100" Title="站点" 
+    <Spin Spinning=Loading>
+        <div style="        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        background: #e1e1e1;">
+            @foreach (var item in Services)
+            {
+                <div class="hvr-shutter-out-horizontal">
+                    <Card Style="width:262px;margin: 10px;display:block;" Bordered Cover="coverTemplate">
+                        <ChildContent>
+                            <CardMeta AvatarTemplate="@avatarTemplate" Title="@item.Name" />
+                            <div style="text-align: center;padding:10px;">
+                                @foreach (var column in item.Columns)
+                                {
+                                    if (column.StateValue)
+                                    {
+                                        <Badge Color="green" Text="@column.IP"></Badge>
+                                    }
+                                    else
+                                    {
+                                        <Badge Color="red" Text="@column.IP"></Badge>
+                                    }
+
+                                }
+                            </div>
+                        </ChildContent>
+                        <ActionTemplate>
+                            @if (item.Columns.Count(r => r.StateValue == false) > 0)
+                            {
+                                <CardAction Class="started-site">
+                                    <Popover content="开启网站">
+                                        <Icon Type="setting" OnClick="@(()=> SiteStateHasChanged(item,true))" />
+                                    </Popover>
+                                </CardAction>
+                            }
+                            else
+                            {
+                                <CardAction Class="stoped-site">
+                                    <Popover content="关闭网站">
+                                        <Icon Type="setting" OnClick="@(()=> SiteStateHasChanged(item,false))" />
+                                    </Popover>
+                                </CardAction>
+                            }
+
+                            <CardAction Class="site-operation">
+                                <Popover content="文件上传">
+                                    <Icon Type="cloud-upload" OnClick="@(()=> Config(item))" />
+                                </Popover>
+                            </CardAction>
+                            @if (item.Columns.Count(r => r.PoolStateValue == false) > 0)
+                            {
+                                <CardAction Class="started-site">
+                                    <Popover content="开启程序池">
+                                        <Icon Type="experiment" OnClick="@(()=> PoolStateHasChanged(item,true))" />
+                                    </Popover>
+                                </CardAction>}
+                            else
+                            {
+                                <CardAction Class="stoped-site">
+                                    <Popover content="关闭程序池">
+                                        <Icon Type="experiment" OnClick="@(()=> PoolStateHasChanged(item,false))" />
+                                    </Popover>
+                                </CardAction>
+                            }
+
+                            <CardAction  Class="site-operation">
+                                <Popover content="回收程序池">
+                                    <Icon Type="redo" OnClick="@(()=> Recycle(item))" />
+                                </Popover>
+                            </CardAction>
+                            @*@foreach (var column in item.Columns)
+        {
+
+
+            <CardAction><Icon Type="setting" OnClick="@(()=> SiteStateHasChanged(column))" /></CardAction>
+            <CardAction><Icon Type="upload" OnClick="@(()=> Config(column))" /></CardAction>
+            <CardAction><Icon Type="edit" OnClick="@(()=> PoolStateHasChanged(column))" /></CardAction>
+            <CardAction><Icon Type="ellipsis" OnClick="@(()=> Recycle(column))" /></CardAction>
+
+        }*@
+
+                        </ActionTemplate>
+                    </Card>
+                </div>
+            }
+        </div>
+
+
+        @*<Table DataSource="Data" Bordered PageSize="100" ScrollX="800">
+            <Column ColSpan="1" @bind-Field="@context.Name" Width="100" Title="站点"
                     RowSpan="@GetRowSpan(context.Name)"
                     SorterCompare="(a,b)=>a.CompareTo(b)" />
             <Column ColSpan="1" @bind-Field="@context.IP" Width="80" Title="服务器" />
@@ -23,7 +110,7 @@
                 <Switch CheckedChildren="已启动" UnCheckedChildren="已停止" OnChange="()=>SiteStateHasChanged(context)" @bind-Value="@context.StateValue"></Switch>
             </Column>
             <Column ColSpan="1" @bind-Field="@context.PhysicalPath" Width="150" Title="目录" />
-            <ActionColumn ColSpan="1" Title="网站操作" Width="60" Fixed="right" >
+            <ActionColumn ColSpan="1" Title="网站操作" Width="60" Fixed="right">
                 <Button Type="primary" Size="small" Shape="round" Icon="upload" OnClick="()=>Config(context)">上传 </Button>
 
             </ActionColumn>
@@ -34,14 +121,14 @@
             <ActionColumn ColSpan="1" Title="程序池操作" Width="60" Fixed="right">
                 <Button Type="primary" Size="small" Shape="round" Icon="redo" OnClick="()=>Recycle(context)">回收</Button>
             </ActionColumn>
-        </Table>
+        </Table>*@
     </Spin>
     <Modal Title="上传文件"
            Visible="@Visible"
            OnOk="@HandleOk"
            OnCancel="@HandleCancel"
            Footer="null">
-        <ServerUploadFile site="@Site"></ServerUploadFile>
+        <ServerUploadFile Service="Service"></ServerUploadFile>
     </Modal>
 </PageContainer>
 @code
@@ -51,9 +138,18 @@
     bool Visible = false;
     int Index = 0;
     int RowSpanCount = 1;
-    Site Site { get; set; }
+    //Site Site { get; set; }
+
+    Service Service { get; set; }
     Site[] Data { get; set; }
     List<Site> List = new List<Site>();
+    List<Service> Services = new List<Service>();
+    RenderFragment avatarTemplate =@<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"></Avatar>;
+    RenderFragment coverTemplate = @<img  style=" object-fit: cover; height: 70px;"  alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />;
+
+    public RenderFragment[] actions = new[] { edit, add };
+    static RenderFragment edit = @<a key="list-loadmore-edit">edit</a>;
+    static RenderFragment add = @<a key="list-loadmore-more">more</a>;
 
     private void HandleOk(MouseEventArgs e)
     {
@@ -75,7 +171,7 @@
             var result = await Http.GetAsync($@"{ WebApiUri}/api/Sites");
             if (result.IsSuccessStatusCode)
             {
-                await NoticeWithIcon(NotificationType.Success,  WebApiUri, $@"成功连接服务：{WebApiUri}");
+                await NoticeWithIcon(NotificationType.Success, WebApiUri, $@"成功连接服务：{WebApiUri}", 0);
 
                 var resultContent = result.Content.ReadAsStringAsync().Result;
                 temp = JsonSerializer.Deserialize<Site[]>(resultContent).ToList();
@@ -88,16 +184,16 @@
         catch (Exception ex)
         {
             RowSpanCount--;
-            await NoticeWithIcon(NotificationType.Error,  WebApiUri, ex.Message.Equals("TypeError: Failed to fetch") ? $@"无法连接到服务:{WebApiUri}" : ex.Message);
+            await NoticeWithIcon(NotificationType.Error, WebApiUri, ex.Message.Equals("TypeError: Failed to fetch") ? $@"无法连接到服务:{WebApiUri}" : ex.Message);
         }
         return temp;
     }
-    private async Task NoticeWithIcon(NotificationType type,  string WebApiUri,string Description)
+    private async Task NoticeWithIcon(NotificationType type, string WebApiUri, string Description,double Duration=0)
     {
         await _notice.Open(new NotificationConfig()
         {
-            Message = "服务端通知",
-            Duration = 0,
+            Message = WebApiUri,
+            Duration = Duration,
             Description = Description,
             NotificationType = type
         });
@@ -114,12 +210,23 @@
         return RowSpanCount;
     }
 
+    private void Config(Service data) {
+        Visible = true;
+        Service = data;
+    }
+
     private void Config(Site data)
     {
         Visible = true;
-        Site = data;
+        //Site = data;
     }
 
+    private async Task Recycle(Service data) {
+        foreach (var item in data.Columns)
+        {
+            await Recycle(item);
+        }
+    }
 
     private async Task Recycle(Site data)
     {
@@ -132,28 +239,40 @@
             var resultContent = result.Content.ReadAsStringAsync().Result;
             if (result.IsSuccessStatusCode)
             {
-                await _message.Success("操作成功！！！");
+                await NoticeWithIcon(NotificationType.Success, "程序池", $@"{data.IP} {data.Name} 回收操作成功！！！", 3);
             }
             else
             {
                 var p = JsonSerializer.Deserialize<PostResonse>(resultContent);
-                await _message.Error($@"代码：{p.status}标题：{p.title}");
+                await NoticeWithIcon(NotificationType.Warning, "程序池", $@"{data.IP} {data.Name} 回收操作失败！！！", 3);
             }
         }
         catch (Exception ex)
         {
-            await _message.Error($@"发生异常！！！{ex.Message}");
+            await NoticeWithIcon(NotificationType.Error, "程序池", $@"{data.IP} {data.Name} {ex.Message}操作异常！！！");
         }
     }
 
-    private async Task SiteStateHasChanged(Site data)
+    private async Task SiteStateHasChanged(Service data,bool openSite=true)
+    {
+        foreach (var item in data.Columns)
+        {
+            await SiteStateHasChanged(item, openSite);
+        }
+    }
+
+    private async Task SiteStateHasChanged(Site data, bool openSite = true)
     {
         try
         {
             var url = $@"{data.WebApiUri}/api/Sites/Stop";
-            if (data.StateValue.Equals(true))
+            //if (data.StateValue.Equals(true))
+            //{
+            //    url = $@"{data.WebApiUri}/api/Sites/Start";
+            //}
+            if (openSite)
             {
-                url = @"/api/Sites/Start";
+                url = $@"{data.WebApiUri}/api/Sites/Start";
             }
             var siteName = new MultipartFormDataContent();
             siteName.Add(new StringContent(data.Name), "siteName");
@@ -161,29 +280,42 @@
             var resultContent = result.Content.ReadAsStringAsync().Result;
             if (result.IsSuccessStatusCode)
             {
-                await _message.Success("操作成功！！！");
+                var operation = openSite ? "开启" : "停止";
+                data.StateValue = openSite;
+                await NoticeWithIcon(NotificationType.Success, "站点", $@"{data.IP} {data.Name} {operation}操作成功！！！",3);
             }
             else
             {
-                data.StateValue = !data.StateValue;//状态恢复
+                //data.StateValue = !data.StateValue;//状态恢复
                 var p = JsonSerializer.Deserialize<PostResonse>(resultContent);
-                await _message.Error($@"代码：{p.status} 标题：{p.title}");
+                await NoticeWithIcon(NotificationType.Warning, "站点", $@"{data.IP} {data.Name} {p.status} {p.title}！！！",3);
             }
         }
         catch (Exception ex)
         {
-            await _message.Error($@"发生异常！！！{ex.Message}");
+            await NoticeWithIcon(NotificationType.Error, "站点", $@"{data.IP} {data.Name} {ex.Message}操作异常！！！");
         }
     }
 
-    private async Task PoolStateHasChanged(Site data)
+    private async Task PoolStateHasChanged(Service data,bool openPool) {
+        foreach (var item in data.Columns)
+        {
+            await PoolStateHasChanged(item, openPool);
+        }
+    }
+
+    private async Task PoolStateHasChanged(Site data,bool openPool=false)
     {
         try
         {
             var url = $@"{data.WebApiUri}/api/AppPools/Stop";
-            if (data.PoolStateValue.Equals(true))
+            //if (data.PoolStateValue.Equals(true))
+            //{
+            //    url = @"/api/AppPools/Start";
+            //}
+            if (openPool)
             {
-                url = @"/api/AppPools/Start";
+                url = $@"{data.WebApiUri}/api/AppPools/Start";
             }
             var poolName = new MultipartFormDataContent();
             poolName.Add(new StringContent(data.PoolName), "appPoolName");
@@ -191,18 +323,20 @@
             var resultContent = result.Content.ReadAsStringAsync().Result;
             if (result.IsSuccessStatusCode)
             {
-                await _message.Success("操作成功！！！");
+                var operation = openPool ? "开启" : "停止";
+                data.PoolStateValue = openPool;
+                await NoticeWithIcon(NotificationType.Success, "程序池", $@"{data.IP} {data.PoolName} {operation}操作成功！！！", 3);
             }
             else
             {
-                data.PoolStateValue = !data.PoolStateValue;//状态恢复
+                //data.PoolStateValue = !data.PoolStateValue;//状态恢复
                 var p = JsonSerializer.Deserialize<PostResonse>(resultContent);
-                await _message.Error($@"代码：{p.status} 标题：{p.title}");
+                await NoticeWithIcon(NotificationType.Warning, "程序池", $@"{data.IP} {data.PoolName} {p.status} {p.title}！！！", 3);
             }
         }
         catch (Exception ex)
         {
-            await _message.Error($@"发生异常！！！{ex.Message}");
+            await NoticeWithIcon(NotificationType.Error, "程序池", $@"{data.IP} {data.Name} {ex.Message}操作异常！！！");
         }
     }
 
@@ -234,6 +368,21 @@
             });
             Loading = false;
             Data = List.ToArray();
+
+            var service = new Service("");
+            foreach (var item in Data)
+            {
+                if (item.Name.Equals(service.Name))
+                {
+                    service.Columns.Add(item);
+                }
+                else
+                {
+                    service = new Service(item.Name);
+                    service.Columns.Add(item);
+                    Services.Add(service);
+                }
+            }
         }
         catch (Exception ex)
         {
@@ -244,3 +393,23 @@
     }
 
 }
+<style>
+    /* you can make up upload button and sample style by using stylesheets */
+    .started-site {
+        background-color: #ffa8a9;
+        margin: 0px !important;
+        height: 45px;
+        padding: 12px;
+        width: 25% !important;
+    }
+    .site-operation {
+        width: 25% !important;
+    }
+    .stoped-site {
+        background-color: #e0ffd1;
+        margin: 0px !important;
+        height: 45px;
+        padding: 12px;
+        width: 25% !important;
+    }
+</style>

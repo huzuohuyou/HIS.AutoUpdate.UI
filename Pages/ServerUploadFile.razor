@@ -15,30 +15,78 @@
       LabelColSpan="8"
       WrapperColSpan="16">
     <FormItem Label="站点">
-        <Input Disabled Placeholder="configFileName" @bind-Value="@Site.Name" />
+        <Input Disabled Placeholder="configFileName" @bind-Value="@Service.Name" />
     </FormItem>
-    <FormItem Label="文件">
-        <Upload Action=@Site.ServerUploadUri
-                Name="files"
-                accept=".zip"
-                @bind-FileList="fileList"
-                ShowButton="fileList?.Count < 1"
-                ListType="picture-card"
-                Data="dict"
-                OnChange="HandleChange">
-            <div>
-                <Icon Type="plus"></Icon>
-                <div className="ant-upload-text">Upload</div>
-            </div>
-        </Upload>
-    </FormItem>
+    @foreach (var item in Service.Columns)
+    {
+        @if (Service.Columns.IndexOf(item) == 0)
+        {
+            <FormItem Label="@item.IP">
+                <Upload Action=@item.ServerUploadUri
+                        Name="files"
+                        accept=".zip"
+                        @bind-FileList="fileList"
+                        ShowButton="fileList?.Count < 1"
+                        ListType="picture-card"
+                        Data="dict"
+                        OnChange="HandleChange">
+                    <div>
+                        <Icon Type="plus"></Icon>
+                        <div className="ant-upload-text">Upload</div>
+                    </div>
+                </Upload>
+            </FormItem>
+        }
+        else if (Service.Columns.IndexOf(item) == 1)
+        {
+            <FormItem Label="@item.IP">
+                <Upload Action=@item.ServerUploadUri
+                        Name="files"
+                        Accept=".zip"
+                        @bind-FileList="fileList2"
+                        ShowButton="fileList2?.Count < 1"
+                        Data="dict"
+                        ListType="picture-card"
+                        OnChange="HandleChange2">
+                    <div>
+                        <Icon Type="plus"></Icon>
+                        <div className="ant-upload-text">Upload</div>
+                    </div>
+                </Upload>
+
+            </FormItem>
+        }
+        else if (Service.Columns.IndexOf(item) == 2)
+        {
+            <FormItem Label="@item.IP">
+                <Upload Action=@item.ServerUploadUri
+                        Name="files"
+                        Accept=".zip"
+                        @bind-FileList="fileList3"
+                        ShowButton="fileList2?.Count < 1"
+                        Data="dict"
+                        ListType="picture-card"
+                        OnChange="HandleChange3">
+                    <div>
+                        <Icon Type="plus"></Icon>
+                        <div className="ant-upload-text">Upload</div>
+                    </div>
+                </Upload>
+            </FormItem>
+        }
+
+
+    }
+
 </Form>
 
 
 @code
 {
+    //[Parameter]
+    //public Site Site { get; set; }
     [Parameter]
-    public Site Site { get; set; }
+    public Service Service { get; set; }
     private Model model = new Model();
 
     Dictionary<string, object> dict = new Dictionary<string, object>()
@@ -48,14 +96,14 @@
 
     protected override void OnInitialized()
     {
-        dict["siteName"] = Site.Name;
+        dict["siteName"] = Service.Name;
         base.OnInitialized();
     }
 
     protected override void OnAfterRender(bool firstRender)
     {
         Console.WriteLine($"OnAfterRender, firstRender:{firstRender}");
-        dict["siteName"] = Site.Name;
+        dict["siteName"] = Service.Name;
         base.OnAfterRender(firstRender);
     }
 
@@ -67,10 +115,9 @@
 
     }
 
-    List<UploadFileItem> fileList = new List<UploadFileItem>
-    {
-
-    };
+    List<UploadFileItem> fileList = new List<UploadFileItem> { };
+    List<UploadFileItem> fileList2 = new List<UploadFileItem> { };
+    List<UploadFileItem> fileList3 = new List<UploadFileItem> { };
 
     async Task HandleChange(UploadInfo fileinfo)
     {
@@ -95,7 +142,51 @@
 
     }
 
+    async Task HandleChange2(UploadInfo fileinfo)
+    {
+        try
+        {
+            if (fileinfo.File.State == UploadState.Success)
+            {
+                await _message.Success("文件上传成功！！！");
+                fileinfo.File.Url = fileinfo.File.ObjectURL;
+            }
+            else if (fileinfo.File.State == UploadState.Fail)
+            {
+                await _message.Error($@"上传失败！！！{fileinfo.File.FileName}");
+            }
 
+        }
+        catch (Exception ex)
+        {
+
+            await _message.Error(ex.Message);
+        }
+
+    }
+
+    async Task HandleChange3(UploadInfo fileinfo)
+    {
+        try
+        {
+            if (fileinfo.File.State == UploadState.Success)
+            {
+                await _message.Success("文件上传成功！！！");
+                fileinfo.File.Url = fileinfo.File.ObjectURL;
+            }
+            else if (fileinfo.File.State == UploadState.Fail)
+            {
+                await _message.Error($@"上传失败！！！{fileinfo.File.FileName}");
+            }
+
+        }
+        catch (Exception ex)
+        {
+
+            await _message.Error(ex.Message);
+        }
+
+    }
 }
 
 <style>
