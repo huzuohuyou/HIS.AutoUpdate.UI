@@ -64,7 +64,7 @@
                         Accept=".zip"
                         @bind-FileList="fileList2"
                         ShowButton="fileList2?.Count < 1"
-                        Data="dict"
+                        Data="dict2"
                         ListType="picture-card"
                         OnChange="HandleChange2">
                     <div>
@@ -83,7 +83,7 @@
                         Accept=".zip"
                         @bind-FileList="fileList3"
                         ShowButton="fileList3?.Count < 1"
-                        Data="dict"
+                        Data="dict3"
                         ListType="picture-card"
                         OnChange="HandleChange3">
                     <div>
@@ -118,16 +118,22 @@
     List<UploadFileItem> fileList2 = new List<UploadFileItem> { };
     List<UploadFileItem> fileList3 = new List<UploadFileItem> { };
     Dictionary<string, object> dict = new Dictionary<string, object>() { { "configFileName", @"" } };
+    Dictionary<string, object> dict2 = new Dictionary<string, object>() { { "configFileName", @"" } };
+    Dictionary<string, object> dict3 = new Dictionary<string, object>() { { "configFileName", @"" } };
     Column column { get; set; } = new Column();
 
     protected override void OnInitialized()
     {
         dict["configFileName"] = Client.Columns.FirstOrDefault().ConfigFileName;
+        dict2["configFileName"] = Client.Columns.Count>1? Client.Columns[1].ConfigFileName:"";
+        dict3["configFileName"] = Client.Columns.Count > 2 ? Client.Columns[2].ConfigFileName : "";
         base.OnInitialized();
     }
     protected override void OnAfterRender(bool firstRender)
     {
         dict["configFileName"] = Client.Columns.FirstOrDefault().ConfigFileName;
+        dict2["configFileName"] = Client.Columns.Count > 1 ? Client.Columns[1].ConfigFileName : "";
+        dict3["configFileName"] = Client.Columns.Count > 2 ? Client.Columns[2].ConfigFileName : "";
         base.OnAfterRender(firstRender);
     }
 
