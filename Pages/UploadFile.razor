@@ -10,7 +10,7 @@
 @using Microsoft.Extensions.Options;
 @using System.Text.RegularExpressions;
 @inject IJSRuntime JSRuntime;
-@inject NotificationService _notice
+@inject NotificationService _notice;
 @inject IOptionsSnapshot<MyProSettings> MyProSettings;
 @*@inject IOptionsSnapshot<Server[]> Servers;*@
 
@@ -32,9 +32,9 @@
         <FormItem Label="模块">
             <Input Disabled Placeholder="settingsSection" @bind-Value="@item.SettingsSectionName" />
         </FormItem>*@
-     <FormItem Label="版本变更">
-                <Input Placeholder="CurrentVersionURL" @bind-Value="@Client.Columns.FirstOrDefault().CurrentVersionURL" />
-            </FormItem>
+    <FormItem Label="版本变更">
+        <Input Placeholder="CurrentVersionURL" @bind-Value="@Client.Columns.FirstOrDefault().CurrentVersionURL" />
+    </FormItem>
     @foreach (var item in Client.Columns)
     {
         @if (Client.Columns.IndexOf(item) == 0)
@@ -82,7 +82,7 @@
                         Name="files"
                         Accept=".zip"
                         @bind-FileList="fileList3"
-                        ShowButton="fileList2?.Count < 1"
+                        ShowButton="fileList3?.Count < 1"
                         Data="dict"
                         ListType="picture-card"
                         OnChange="HandleChange3">
@@ -95,12 +95,12 @@
         }
 
     }
-        <FormItem WrapperColOffset="8" WrapperColSpan="16">
-            <Button Type="@ButtonType.Primary" HtmlType="submit">
-                提交
-            </Button>
-        </FormItem>
-    </Form>
+    <FormItem WrapperColOffset="8" WrapperColSpan="16">
+        <Button Type="@ButtonType.Primary" HtmlType="submit">
+            提交
+        </Button>
+    </FormItem>
+</Form>
 
 
 
@@ -131,7 +131,7 @@
         base.OnAfterRender(firstRender);
     }
 
-    private async Task NoticeWithIcon(NotificationType type, string Message, string Description)
+    private async Task NoticeWithIcon(NotificationType type, string Message, string Description, double Duration = 0)
     {
         await _notice.Open(new NotificationConfig()
         {
@@ -198,18 +198,18 @@
                 {
                     item.CurrentVersionURL = $@"{ m1?.ToString()}|{fileinfo.File.FileName}";
                 }
-                await NoticeWithIcon(NotificationType.Success, "操作", "上传成功！！");
+                await NoticeWithIcon(NotificationType.Success, "文件上传", "上传成功！！", 3);
                 fileinfo.File.Url = fileinfo.File.ObjectURL;
             }
             else if (fileinfo.File.State == UploadState.Fail)
             {
-                await NoticeWithIcon(NotificationType.Warning, "失败", "上传失败！！");
+                await NoticeWithIcon(NotificationType.Warning, "文件上传", $@"上传失败{fileinfo.File.FileName}");
             }
         }
         catch (Exception ex)
         {
 
-            await NoticeWithIcon(NotificationType.Error, "异常", ex.Message);
+            await NoticeWithIcon(NotificationType.Error, "文件上传", $@"异常：{ ex.Message}");
         }
     }
 
@@ -224,18 +224,18 @@
                 {
                     item.CurrentVersionURL = $@"{ m1?.ToString()}|{fileinfo.File.FileName}";
                 }
-                await NoticeWithIcon(NotificationType.Success, "操作", "上传成功！！");
+                await NoticeWithIcon(NotificationType.Success, "操作", "上传成功！！",3);
                 fileinfo.File.Url = fileinfo.File.ObjectURL;
             }
             else if (fileinfo.File.State == UploadState.Fail)
             {
-                await NoticeWithIcon(NotificationType.Warning, "失败", "上传失败！！");
+                await NoticeWithIcon(NotificationType.Warning, "文件上传", $@"上传失败{fileinfo.File.FileName}");
             }
         }
         catch (Exception ex)
         {
 
-            await NoticeWithIcon(NotificationType.Error, "异常", ex.Message);
+            await NoticeWithIcon(NotificationType.Error, "文件上传", $@"异常：{ ex.Message}", 3);
         }
     }
 
@@ -250,18 +250,18 @@
                 {
                     item.CurrentVersionURL = $@"{ m1?.ToString()}|{fileinfo.File.FileName}";
                 }
-                await NoticeWithIcon(NotificationType.Success, "操作", "上传成功！！");
+                await NoticeWithIcon(NotificationType.Success, "操作", "上传成功！！",3);
                 fileinfo.File.Url = fileinfo.File.ObjectURL;
             }
             else if (fileinfo.File.State == UploadState.Fail)
             {
-                await NoticeWithIcon(NotificationType.Warning, "失败", "上传失败！！");
+                await NoticeWithIcon(NotificationType.Warning, "文件上传", $@"上传失败{fileinfo.File.FileName}");
             }
         }
         catch (Exception ex)
         {
 
-            await NoticeWithIcon(NotificationType.Error, "异常", ex.Message);
+            await NoticeWithIcon(NotificationType.Error, "文件上传", $@"异常：{ ex.Message}", 3);
         }
     }
 }
@@ -271,7 +271,6 @@
     .ant-upload-select-picture-card i {
         color: #999;
         font-size: 32px;
-
     }
 
     .ant-upload-select-picture-card .ant-upload-text {
