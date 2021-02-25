@@ -10,7 +10,7 @@
 @using Microsoft.Extensions.Options;
 @inject IJSRuntime JSRuntime;
 @inject IOptionsSnapshot<MyProSettings> MyProSettings;
-
+@inject NotificationService _notice
 <Form Model="@model"
       LabelColSpan="8"
       WrapperColSpan="16">
@@ -63,7 +63,7 @@
                         Name="files"
                         Accept=".zip"
                         @bind-FileList="fileList3"
-                        ShowButton="fileList2?.Count < 1"
+                        ShowButton="fileList3?.Count < 1"
                         Data="dict"
                         ListType="picture-card"
                         OnChange="HandleChange3">
@@ -90,7 +90,7 @@
     private Model model = new Model();
 
     Dictionary<string, object> dict = new Dictionary<string, object>()
-    {
+{
         { "siteName", ""}
     };
 
@@ -125,19 +125,17 @@
         {
             if (fileinfo.File.State == UploadState.Success)
             {
-                await _message.Success("文件上传成功！！！");
+                await NoticeWithIcon(NotificationType.Success, "文件上传", $@"上传成功！！！", 3);
                 fileinfo.File.Url = fileinfo.File.ObjectURL;
             }
-            else if(fileinfo.File.State == UploadState.Fail)
+            else if (fileinfo.File.State == UploadState.Fail)
             {
-                await _message.Error($@"上传失败！！！{fileinfo.File.FileName}");
+                await NoticeWithIcon(NotificationType.Warning, "文件上传", $@"上传失败{fileinfo.File.FileName}");
             }
-
         }
         catch (Exception ex)
         {
-
-            await _message.Error(ex.Message);
+            await NoticeWithIcon(NotificationType.Error, "文件上传", $@"异常：{ex.Message}", 3);
         }
 
     }
@@ -148,21 +146,30 @@
         {
             if (fileinfo.File.State == UploadState.Success)
             {
-                await _message.Success("文件上传成功！！！");
+                await NoticeWithIcon(NotificationType.Success, "文件上传", $@"上传成功！！！", 3);
                 fileinfo.File.Url = fileinfo.File.ObjectURL;
             }
             else if (fileinfo.File.State == UploadState.Fail)
             {
-                await _message.Error($@"上传失败！！！{fileinfo.File.FileName}");
+                await NoticeWithIcon(NotificationType.Warning, "文件上传", $@"上传失败{fileinfo.File.FileName}");
             }
-
         }
         catch (Exception ex)
         {
-
-            await _message.Error(ex.Message);
+            await NoticeWithIcon(NotificationType.Error, "文件上传", $@"异常：{ex.Message}");
         }
 
+    }
+
+    private async Task NoticeWithIcon(NotificationType type, string WebApiUri, string Description, double Duration = 0)
+    {
+        await _notice.Open(new NotificationConfig()
+        {
+            Message = WebApiUri,
+            Duration = Duration,
+            Description = Description,
+            NotificationType = type
+        });
     }
 
     async Task HandleChange3(UploadInfo fileinfo)
@@ -171,21 +178,18 @@
         {
             if (fileinfo.File.State == UploadState.Success)
             {
-                await _message.Success("文件上传成功！！！");
+                await NoticeWithIcon(NotificationType.Success, "文件上传", $@"上传成功！！！", 3);
                 fileinfo.File.Url = fileinfo.File.ObjectURL;
             }
             else if (fileinfo.File.State == UploadState.Fail)
             {
-                await _message.Error($@"上传失败！！！{fileinfo.File.FileName}");
+                await NoticeWithIcon(NotificationType.Warning, "文件上传", $@"上传失败{fileinfo.File.FileName}");
             }
-
         }
         catch (Exception ex)
         {
-
-            await _message.Error(ex.Message);
+            await NoticeWithIcon(NotificationType.Error, "文件上传", $@"异常：{ex.Message}", 3);
         }
-
     }
 }
 
