@@ -31,7 +31,7 @@
                             </div>
                         </ChildContent>
                         <ActionTemplate>
-                            <CardAction Class="hvr-underline-reveal">
+                            <CardAction >
                                 <Popover content="配置客户端">
                                     <Icon Type="setting" OnClick="@(()=> Config(item))" />
                                 </Popover>
@@ -72,8 +72,8 @@
 
     Column currentColumn { get; set; }
     Client currentClient { get; set; }
-    RenderFragment avatarTemplate =@<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"></Avatar>;
-    RenderFragment coverTemplate = @<img style=" object-fit: cover; height: 70px;" alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />;
+    RenderFragment avatarTemplate =@<img style="width:20px;" src="/images/客户端管理.png" />;
+    RenderFragment coverTemplate = @<img style=" object-fit: cover; height: 70px;" alt="example" src="/images/树图.png" />;
 
     private void HandleOk(MouseEventArgs e)
     {

@@ -78,21 +78,21 @@
                                 </CardAction>
                             }
 
-                            <CardAction  Class="site-operation">
+                            <CardAction Class="site-operation">
                                 <Popover content="回收程序池">
                                     <Icon Type="redo" OnClick="@(()=> Recycle(item))" />
                                 </Popover>
                             </CardAction>
                             @*@foreach (var column in item.Columns)
-        {
+                                {
 
 
-            <CardAction><Icon Type="setting" OnClick="@(()=> SiteStateHasChanged(column))" /></CardAction>
-            <CardAction><Icon Type="upload" OnClick="@(()=> Config(column))" /></CardAction>
-            <CardAction><Icon Type="edit" OnClick="@(()=> PoolStateHasChanged(column))" /></CardAction>
-            <CardAction><Icon Type="ellipsis" OnClick="@(()=> Recycle(column))" /></CardAction>
+                                    <CardAction><Icon Type="setting" OnClick="@(()=> SiteStateHasChanged(column))" /></CardAction>
+                                    <CardAction><Icon Type="upload" OnClick="@(()=> Config(column))" /></CardAction>
+                                    <CardAction><Icon Type="edit" OnClick="@(()=> PoolStateHasChanged(column))" /></CardAction>
+                                    <CardAction><Icon Type="ellipsis" OnClick="@(()=> Recycle(column))" /></CardAction>
 
-        }*@
+                                }*@
 
                         </ActionTemplate>
                     </Card>
@@ -102,26 +102,26 @@
 
 
         @*<Table DataSource="Data" Bordered PageSize="100" ScrollX="800">
-            <Column ColSpan="1" @bind-Field="@context.Name" Width="100" Title="站点"
-                    RowSpan="@GetRowSpan(context.Name)"
-                    SorterCompare="(a,b)=>a.CompareTo(b)" />
-            <Column ColSpan="1" @bind-Field="@context.IP" Width="80" Title="服务器" />
-            <Column @bind-Field="@context.StateValue" Width="60" Title="网站状态">
-                <Switch CheckedChildren="已启动" UnCheckedChildren="已停止" OnChange="()=>SiteStateHasChanged(context)" @bind-Value="@context.StateValue"></Switch>
-            </Column>
-            <Column ColSpan="1" @bind-Field="@context.PhysicalPath" Width="150" Title="目录" />
-            <ActionColumn ColSpan="1" Title="网站操作" Width="60" Fixed="right">
-                <Button Type="primary" Size="small" Shape="round" Icon="upload" OnClick="()=>Config(context)">上传 </Button>
+                <Column ColSpan="1" @bind-Field="@context.Name" Width="100" Title="站点"
+                        RowSpan="@GetRowSpan(context.Name)"
+                        SorterCompare="(a,b)=>a.CompareTo(b)" />
+                <Column ColSpan="1" @bind-Field="@context.IP" Width="80" Title="服务器" />
+                <Column @bind-Field="@context.StateValue" Width="60" Title="网站状态">
+                    <Switch CheckedChildren="已启动" UnCheckedChildren="已停止" OnChange="()=>SiteStateHasChanged(context)" @bind-Value="@context.StateValue"></Switch>
+                </Column>
+                <Column ColSpan="1" @bind-Field="@context.PhysicalPath" Width="150" Title="目录" />
+                <ActionColumn ColSpan="1" Title="网站操作" Width="60" Fixed="right">
+                    <Button Type="primary" Size="small" Shape="round" Icon="upload" OnClick="()=>Config(context)">上传 </Button>
 
-            </ActionColumn>
-            <Column ColSpan="1" @bind-Field="@context.PoolName" Width="100" Title="应用程序池" />
-            <Column ColSpan="1" @bind-Field="@context.PoolStateValue" Width="60" Title="程序池状态" Ellipsis>
-                <Switch CheckedChildren="已启动" UnCheckedChildren="已停止" OnChange="()=>PoolStateHasChanged(context)" @bind-Value="@context.PoolStateValue"></Switch>
-            </Column>
-            <ActionColumn ColSpan="1" Title="程序池操作" Width="60" Fixed="right">
-                <Button Type="primary" Size="small" Shape="round" Icon="redo" OnClick="()=>Recycle(context)">回收</Button>
-            </ActionColumn>
-        </Table>*@
+                </ActionColumn>
+                <Column ColSpan="1" @bind-Field="@context.PoolName" Width="100" Title="应用程序池" />
+                <Column ColSpan="1" @bind-Field="@context.PoolStateValue" Width="60" Title="程序池状态" Ellipsis>
+                    <Switch CheckedChildren="已启动" UnCheckedChildren="已停止" OnChange="()=>PoolStateHasChanged(context)" @bind-Value="@context.PoolStateValue"></Switch>
+                </Column>
+                <ActionColumn ColSpan="1" Title="程序池操作" Width="60" Fixed="right">
+                    <Button Type="primary" Size="small" Shape="round" Icon="redo" OnClick="()=>Recycle(context)">回收</Button>
+                </ActionColumn>
+            </Table>*@
     </Spin>
     <Modal Title="上传文件"
            Visible="@Visible"
@@ -144,9 +144,8 @@
     Site[] Data { get; set; }
     List<Site> List = new List<Site>();
     List<Service> Services = new List<Service>();
-    RenderFragment avatarTemplate =@<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"></Avatar>;
-    RenderFragment coverTemplate = @<img  style=" object-fit: cover; height: 70px;"  alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />;
-
+    RenderFragment avatarTemplate =@<img style="width:20px;" src="/images/服务.png" />;
+    RenderFragment coverTemplate = @<img style=" object-fit: cover; height: 70px;" src="/images/静态素材2.png"  />;
     public RenderFragment[] actions = new[] { edit, add };
     static RenderFragment edit = @<a key="list-loadmore-edit">edit</a>;
     static RenderFragment add = @<a key="list-loadmore-more">more</a>;
@@ -188,7 +187,7 @@
         }
         return temp;
     }
-    private async Task NoticeWithIcon(NotificationType type, string WebApiUri, string Description,double Duration=0)
+    private async Task NoticeWithIcon(NotificationType type, string WebApiUri, string Description, double Duration = 0)
     {
         await _notice.Open(new NotificationConfig()
         {
@@ -210,7 +209,8 @@
         return RowSpanCount;
     }
 
-    private void Config(Service data) {
+    private void Config(Service data)
+    {
         Visible = true;
         Service = data;
     }
@@ -221,7 +221,8 @@
         //Site = data;
     }
 
-    private async Task Recycle(Service data) {
+    private async Task Recycle(Service data)
+    {
         foreach (var item in data.Columns)
         {
             await Recycle(item);
@@ -253,7 +254,7 @@
         }
     }
 
-    private async Task SiteStateHasChanged(Service data,bool openSite=true)
+    private async Task SiteStateHasChanged(Service data, bool openSite = true)
     {
         foreach (var item in data.Columns)
         {
@@ -282,13 +283,13 @@
             {
                 var operation = openSite ? "开启" : "停止";
                 data.StateValue = openSite;
-                await NoticeWithIcon(NotificationType.Success, "站点", $@"{data.IP} {data.Name} {operation}操作成功！！！",3);
+                await NoticeWithIcon(NotificationType.Success, "站点", $@"{data.IP} {data.Name} {operation}操作成功！！！", 3);
             }
             else
             {
                 //data.StateValue = !data.StateValue;//状态恢复
                 var p = JsonSerializer.Deserialize<PostResonse>(resultContent);
-                await NoticeWithIcon(NotificationType.Warning, "站点", $@"{data.IP} {data.Name} {p.status} {p.title}！！！",3);
+                await NoticeWithIcon(NotificationType.Warning, "站点", $@"{data.IP} {data.Name} {p.status} {p.title}！！！", 3);
             }
         }
         catch (Exception ex)
@@ -297,14 +298,15 @@
         }
     }
 
-    private async Task PoolStateHasChanged(Service data,bool openPool) {
+    private async Task PoolStateHasChanged(Service data, bool openPool)
+    {
         foreach (var item in data.Columns)
         {
             await PoolStateHasChanged(item, openPool);
         }
     }
 
-    private async Task PoolStateHasChanged(Site data,bool openPool=false)
+    private async Task PoolStateHasChanged(Site data, bool openPool = false)
     {
         try
         {
@@ -402,9 +404,11 @@
         padding: 12px;
         width: 25% !important;
     }
+
     .site-operation {
         width: 25% !important;
     }
+
     .stoped-site {
         background-color: #e0ffd1;
         margin: 0px !important;
